@@ -8,7 +8,8 @@ open AdvancedEsolang.Syntax
 
 let rec runMethod (ctx: RunCtx) (this: Object) (method: Method) (args: Object list) =
     let mutable result = None
-    
+    let ret v = result <- Some v
+
     match method.body with
         | Some stmts ->
             let vars = Dictionary<string, Object>()
@@ -63,7 +64,7 @@ let rec runMethod (ctx: RunCtx) (this: Object) (method: Method) (args: Object li
                     runExpr (CallExpr (objExpr, methodName, args)) |> ignore
                     false
                 | Return res ->
-                    result <- Some (runExpr res)
+                    ret (runExpr res)
                     true
                 | If (cond, stmts) ->
                     if (runExpr cond).is(BuiltinTypes.True) then
@@ -90,9 +91,20 @@ let rec runMethod (ctx: RunCtx) (this: Object) (method: Method) (args: Object li
             runStmts stmts |> ignore
                     
         | None ->
-            match BuiltinMethods.get method with
-            | true, mtd -> result <- Some (mtd (ctx, this, args))
-            | false, _ -> errCallEmpty this._class method.name
+            match this._class.name with
+            | "Program" when this <> ctx.programObj -> errCallWrongProgram this._class method.name
+            | "Input" | "Output" when this.getField("program") <> ctx.programObj -> errCallNoProgram this._class method.name
+            | _ -> () 
+
+            match this._class.name, method.name with
+            | "Output", "write" -> BuiltinMethods.write args
+            | "Input", "read" -> BuiltinMethods.read () |> ret
+            | "String", "equals" -> BuiltinMethods.strEquals this args |> ret
+            | "String", "getLength" -> BuiltinMethods.strGetLength ctx this |> ret
+            | "Program", "error" -> BuiltinMethods.error args
+            | "TypeUtils", "create" -> BuiltinMethods.createObj ctx args |> ret
+            | "TypeUtils", "typeName" -> BuiltinMethods.typeName args |> ret
+            | _ -> errCallEmpty this._class method.name
     
     match result with
     | Some r -> r
