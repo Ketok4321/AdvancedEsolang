@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Generators.fs" />
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AdvancedEsolang.Interpreter\AdvancedEsolang.Interpreter.fsproj" />
+      <ProjectReference Include="..\AdvancedEsolang.Syntax\AdvancedEsolang.Syntax.fsproj" />
+      <ProjectReference Include="..\AdvancedEsolang.Parser\AdvancedEsolang.Parser.fsproj" />
+      <ProjectReference Include="..\AdvancedEsolang.Stringifier\AdvancedEsolang.Stringifier.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Argu" Version="6.1.1"/>
+    </ItemGroup>
+
+</Project>

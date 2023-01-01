@@ -1,0 +1,104 @@
+﻿namespace AdvancedEsolang.Syntax
+
+[<AbstractClass>]
+type ClassMember(name: string) =
+    member this.name = name
+
+type Method(name: string, parameters: string list, body: Statement list option) =
+    inherit ClassMember(name)
+    member this.parameters = parameters
+    member this.body = body
+    
+    override this.ToString() =
+        let prms = this.parameters |> String.concat ", "
+        let body = sprintf "%A" this.body
+        $"{this.name}({prms}): {body}"
+
+type Field(name: string) =
+    inherit ClassMember(name)
+    
+    override this.ToString() = this.name
+
+[<CustomEquality>]
+[<NoComparison>]
+type Class = {
+    name: string
+    parent: Class option
+    isAbstract: bool
+    ownMembers: ClassMember list
+}
+with
+    member this.is _class =
+        if this = _class then
+            true
+        else
+            match this.parent with
+            | Some parent -> parent.is(_class)
+            | None -> false
+        
+    member this.members =
+        match this.parent with
+        | Some parent -> List.concat [this.ownMembers; parent.members] |> List.distinctBy (fun m -> m.name)
+        | None -> this.ownMembers
+    
+    member this.fields =
+        this.members |> List.choose (fun m ->
+            match m with
+            | :? Field as f -> Some f
+            | _ -> None
+            )
+    
+    member this.methods =
+        this.members |> List.choose (fun m ->
+            match m with
+            | :? Method as f -> Some f
+            | _ -> None
+            )
+    
+    member this.getMember name =
+        this.members |> List.tryFind (fun m -> m.name = name)
+    
+    member this.get<'a when 'a :> ClassMember> name =
+        match this.getMember name with
+        | Some mem ->
+            match mem with
+            | :?'a as matchedMem -> Some matchedMem
+            | _ -> None
+        | None -> None
+    
+    override this.Equals obj =
+        match obj with
+        | :? Class as _class -> this.name = _class.name
+        | _ -> false
+    
+    override this.GetHashCode() = this.name.GetHashCode()
+
+type Library = {
+    name: string
+    classes: Class list
+    dependencies: Library list
+}
+with
+    member this.fullDeps =
+        this :: (this.dependencies |> List.map (fun d -> d.fullDeps) |> List.concat |> List.distinct) 
+    
+    member this.classDict =
+        let result = System.Collections.Generic.Dictionary<string, Class>()
+        
+        for dep in this.fullDeps do
+            for _class in dep.classes do
+                result[_class.name] <- _class
+        
+        result
+        
+(*    member this.getClass name =
+        match this.classes |> List.tryFind (fun c -> c.name = name) with
+        | Some _class -> Some _class
+        | None ->
+            match this.dependencies |> List.tryFind (fun d -> d.getClass(name) <> None) with
+            | Some dep -> dep.getClass(name)
+            | None -> None
+            // this.dependencies
+            //     |> List.map (fun p -> p.classes)
+            //     |> List.concat
+            //     |> List.tryFind (fun c -> c.name = name)*)
