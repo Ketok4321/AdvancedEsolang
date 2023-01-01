@@ -1,0 +1,14 @@
+class Cat extends Program:
+    field input
+    field output
+    method main():
+        this.input = Input
+        this.output = Output
+
+        (this.input).program = this
+        (this.output).program = this
+
+        variable input = (this.input).read()
+        (this.output).write(input)
+    end
+end
