@@ -1,0 +1,44 @@
+abstract class Number extends Object:
+    method ++():
+        
+    end
+    
+    method --():
+        
+    end
+    
+    method isZero():
+        
+    end
+    
+    method toString():
+        
+    end
+    
+    method +(n):
+        if n.isZero():
+            return this
+        end
+        return (this.++()) + (n.--())
+    end
+    
+    method -(n):
+        if n.isZero():
+            return this
+        end
+        return (this.--()) - (n.--())
+    end
+    
+    method equals(n):
+        if n.isZero():
+            if this.isZero():
+                return True
+            end
+            return False
+        end
+        if this.isZero():
+            return False
+        end
+        return (this.--()).equals(n.--())
+    end
+end

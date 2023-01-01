@@ -1,0 +1,23 @@
+import ../generated/array
+
+class List extends Object:
+    field array
+    field size
+
+    method init(array):
+        this.array = array
+        this.size = 0
+
+        return this
+    end
+
+    method push(item):
+        (this.array).set(this.size, item)
+        this.size = (this.size).++()
+    end
+
+    method pop():
+        this.size = (this.size).--()
+        return (this.array).get(this.size)
+    end
+end
