@@ -91,12 +91,23 @@ let rec runMethod (ctx: RunCtx) (this: Object) (method: Method) (args: Object li
             runStmts stmts |> ignore
                     
         | None ->
-            match this._class.name with
+            // TODO: Move it to somewhere else
+            let rec getDefiningClass (c: Class) (m: ClassMember) =
+                if c.ownMembers |> List.contains m then
+                    c
+                else
+                    match c.parent with
+                    | Some p -> getDefiningClass p m
+                    | None -> errInternal $"Couldn't find defining class for member %s{m.name}"
+            
+            let definingClass = getDefiningClass this._class method
+            
+            match definingClass.name with
             | "Program" when this <> ctx.programObj -> errCallWrongProgram this._class method.name
             | "Input" | "Output" when this.getField("program") <> ctx.programObj -> errCallNoProgram this._class method.name
-            | _ -> () 
-
-            match this._class.name, method.name with
+            | _ -> ()
+            
+            match definingClass.name, method.name with
             | "Output", "write" -> BuiltinMethods.write args
             | "Input", "read" -> BuiltinMethods.read () |> ret
             | "String", "equals" -> BuiltinMethods.strEquals this args |> ret
