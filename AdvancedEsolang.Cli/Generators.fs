@@ -3,7 +3,6 @@ module Generators
 open System.Collections.Generic
 
 open AdvancedEsolang.Syntax
-open AdvancedEsolang.Interpreter
 
 open BuiltinTypes
 open MethodBodyUtil

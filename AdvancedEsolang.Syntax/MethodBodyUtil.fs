@@ -1,4 +1,4 @@
-module AdvancedEsolang.Interpreter.MethodBodyUtil
+module AdvancedEsolang.Syntax.MethodBodyUtil
 
 open AdvancedEsolang.Syntax
 

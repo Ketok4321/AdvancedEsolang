@@ -1,4 +1,4 @@
-module AdvancedEsolang.Interpreter.BuiltinTypes
+module AdvancedEsolang.Syntax.BuiltinTypes
 
 open AdvancedEsolang.Syntax
 open MethodBodyUtil

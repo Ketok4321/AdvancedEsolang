@@ -4,7 +4,7 @@ open FParsec
 open Argu
 
 open AdvancedEsolang.Syntax
-open AdvancedEsolang.Interpreter
+open AdvancedEsolang.InterpreterCS
 open AdvancedEsolang.Parser
 open AdvancedEsolang.Stringifier
 
@@ -97,59 +97,63 @@ type CliArguments =
 let main argv =   
     let parser = ArgumentParser.Create<CliArguments>()
 
+(*
     try
-        let result = parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
+*)
+    let result = parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
 
-        match result.GetSubCommand() with
-        | Version -> printfn "%s" (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
-        | Run r -> read (r.GetResult(RunArgs.Path)) |> Runner.run |> ignore
-        | Format r ->
-            let path = r.GetResult(FormatArgs.Path)
+    match result.GetSubCommand() with
+    | Version -> printfn "%s" (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
+    | Run r ->
+        let interpreter = AdvInterpreter(read (r.GetResult(RunArgs.Path)))
+        interpreter.Run()
+    | Format r ->
+        let path = r.GetResult(FormatArgs.Path)
+        
+        let library = read path
+        let code = Stringifier.sLibrary library
+        File.WriteAllText(path, code)
+    | Generate r ->
+        let name = r.GetResult(Name)
+        
+        let watch = System.Diagnostics.Stopwatch()
+        watch.Start()
+
+        printfn "Generating..."
+        let library =
+            if name = "builtin" then
+                BuiltinTypes.library
+            else
+                let count = r.GetResult(Count)
+
+                match generators.TryGetValue(name) with
+                | true, gen -> gen count
+                | false, _ -> failwithf "Unknown generator '%s'." name
+        
+        printfn "Generated in %i ms." watch.ElapsedMilliseconds
+        watch.Restart()
+
+        printfn "Stringifying..."
+        let libraryStr = Stringifier.sLibrary library
+        printfn "Stringied in %i ms." watch.ElapsedMilliseconds
+        watch.Restart()
+
+        printfn "Saving..."
+        File.WriteAllText (r.GetResult(GenerateArgs.Output, defaultValue = $"./{name}.adv"), libraryStr)
+        printfn "Saved in %i ms." watch.ElapsedMilliseconds
+        watch.Restart()
+    | Merge r ->
+        let path = r.GetResult(MergeArgs.Path)
+        let output = r.GetResult(MergeArgs.Output)
+
+        let lib = read path
+
+        let merged = { lib with dependencies = [BuiltinTypes.library]; classes = (lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.rev |> List.map (fun l -> l.classes) |> List.concat) }
+        
+        File.WriteAllText(output, Stringifier.sLibrary merged)
+        ()
             
-            let library = read path
-            let code = Stringifier.sLibrary library
-            File.WriteAllText(path, code)
-        | Generate r ->
-            let name = r.GetResult(Name)
-            
-            let watch = System.Diagnostics.Stopwatch()
-            watch.Start()
-
-            printfn "Generating..."
-            let library =
-                if name = "builtin" then
-                    BuiltinTypes.library
-                else
-                    let count = r.GetResult(Count)
-
-                    match generators.TryGetValue(name) with
-                    | true, gen -> gen count
-                    | false, _ -> failwithf "Unknown generator '%s'." name
-            
-            printfn "Generated in %i ms." watch.ElapsedMilliseconds
-            watch.Restart()
-
-            printfn "Stringifying..."
-            let libraryStr = Stringifier.sLibrary library
-            printfn "Stringied in %i ms." watch.ElapsedMilliseconds
-            watch.Restart()
-
-            printfn "Saving..."
-            File.WriteAllText (r.GetResult(GenerateArgs.Output, defaultValue = $"./{name}.adv"), libraryStr)
-            printfn "Saved in %i ms." watch.ElapsedMilliseconds
-            watch.Restart()
-        | Merge r ->
-            let path = r.GetResult(MergeArgs.Path)
-            let output = r.GetResult(MergeArgs.Output)
-
-            let lib = read path
-
-            let merged = { lib with dependencies = [BuiltinTypes.library]; classes = (lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.rev |> List.map (fun l -> l.classes) |> List.concat) }
-            
-            File.WriteAllText(output, Stringifier.sLibrary merged)
-            ()
-            
-    with e ->
-        printfn "Error: %s" e.Message
+(*    with e ->
+        printfn "Error: %s" e.Message*)
     
     0

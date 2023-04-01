@@ -11,14 +11,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AdvancedEsolang.Interpreter\AdvancedEsolang.Interpreter.fsproj" />
+      <ProjectReference Include="..\AdvancedEsolang.InterpreterCS\AdvancedEsolang.InterpreterCS.csproj" />
       <ProjectReference Include="..\AdvancedEsolang.Syntax\AdvancedEsolang.Syntax.fsproj" />
       <ProjectReference Include="..\AdvancedEsolang.Parser\AdvancedEsolang.Parser.fsproj" />
       <ProjectReference Include="..\AdvancedEsolang.Stringifier\AdvancedEsolang.Stringifier.fsproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Argu" Version="6.1.1"/>
+        <PackageReference Include="Argu" Version="6.1.1" />
     </ItemGroup>
 
 </Project>
