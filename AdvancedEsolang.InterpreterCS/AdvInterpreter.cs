@@ -12,6 +12,8 @@ public class AdvInterpreter
     public readonly Library ProgramLib;
     public readonly AdvObject ProgramObj;
 
+    public readonly IReadOnlyDictionary<string, Class> Classes;
+
     private readonly Dictionary<(string, string), BuiltinMethod> builtinMethods =
         new Dictionary<(string, string), BuiltinMethod>();
 
@@ -21,6 +23,7 @@ public class AdvInterpreter
         
         ProgramLib = programLib;
         ProgramObj = new AdvObject(programClass);
+        Classes = ProgramLib.classDict;
         
         InitBuiltinMethods();
     }
@@ -67,7 +70,7 @@ public class AdvInterpreter
         AddBuiltinMethod(("TypeUtils", "create"), false, ctx =>
         {
             var name = ((AdvString) ctx.Args[0]).Value; //TODO: Safety
-            var type = ctx.Interpreter.ProgramLib.classDict.GetValueOrDefault(name) ?? throw new Exception(); //TODO
+            var type = ctx.Interpreter.Classes.GetValueOrDefault(name) ?? throw new Exception(); //TODO
             
             return new AdvObject(type);
         });
@@ -115,10 +118,10 @@ public class AdvInterpreter
             {
                 Expression.Get { name: "this" } => self,
                 Expression.Get { name: var name } when locals.ContainsKey(name) => locals[name],
-                Expression.Get { name: var name } => new AdvObject(ProgramLib.classDict.GetValueOrDefault(name) ?? throw new Exception()), //TODO
+                Expression.Get { name: var name } => new AdvObject(Classes.GetValueOrDefault(name) ?? throw new Exception()), //TODO
                 Expression.CallExpr { objExpr: var objExpr, methodName: var methodName, args: var args} => RunCall(objExpr, methodName, args),
                 Expression.GetF { objExpr: var objExpr, fieldName: var fieldName } => RunExpression(objExpr).GetField(fieldName),
-                Expression.Is { objExpr: var objExpr, className: var className } => RunExpression(objExpr).Class.@is(ProgramLib.classDict.GetValueOrDefault(className) ?? throw new Exception()).ToAdvObject(), //TODO
+                Expression.Is { objExpr: var objExpr, className: var className } => RunExpression(objExpr).Class.@is(Classes.GetValueOrDefault(className) ?? throw new Exception()).ToAdvObject(), //TODO
                 Expression.Equals {objExpr1: var objExpr1, objExpr2: var objExpr2} => (RunExpression(objExpr1) == RunExpression(objExpr2)).ToAdvObject(),
                 Expression.String { text: var text } => new AdvString(text)
             };
