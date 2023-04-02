@@ -1,0 +1,39 @@
+import ../generated/array
+import ../std/list
+
+class Fibonacci extends Program:
+    field output
+
+    method compute(count):
+        variable list = List.init(Array16)
+
+        if (count.isZero()).or(count.equals(1)):
+            this.error("Count must be greater or equal 2")
+        end
+        list.push(0)
+        list.push(1)
+        variable count = count - 2
+
+        while !(count.isZero()):
+            variable count = count.--()
+
+            list.push(((list.array).get((list.size) - 1)) + ((list.array).get((list.size) - 2)))
+        end
+
+        return list
+    end
+
+    method main():
+        this.output = Output
+        (this.output).program = this
+
+        variable result = this.compute(16)
+
+        variable i = 0
+
+        while !(i.equals(result.size)):
+            (this.output).write((result.array).get(i))
+            variable i = i.++()
+        end
+    end
+end
