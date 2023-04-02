@@ -65,8 +65,6 @@ public class AdvInterpreter
         
         //TODO: String length
         
-        //TODO: Program error
-        
         AddBuiltinMethod(("TypeUtils", "create"), false, ctx =>
         {
             var name = ((AdvString) ctx.Args[0]).Value; //TODO: Safety

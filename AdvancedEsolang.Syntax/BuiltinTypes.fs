@@ -33,8 +33,6 @@ let Program = {
     isAbstract = true
     ownMembers = [
         Method("main", [], Abstract)
-
-        Method("error", ["message"], Builtin)
     ]
 }
 
