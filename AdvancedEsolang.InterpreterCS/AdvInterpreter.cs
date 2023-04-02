@@ -174,7 +174,14 @@ public class AdvInterpreter
 
     private AdvObject HandleEmptyBody(AdvObject self, Method method, AdvObject[] args)
     {
-        var definingClass = self.Class; //TODO
+        Class GetDefiningClass(Class type, ClassMember member)
+        {
+            if (type.ownMembers.Contains(member)) return type;
+
+            return GetDefiningClass(type.parent.ToNullable()!, member);
+        }
+        
+        var definingClass = GetDefiningClass(self.Class, method);
 
         if (builtinMethods.TryGetValue((definingClass.name, method.name), out var builtinMethod))
         {
