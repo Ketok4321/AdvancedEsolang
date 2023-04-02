@@ -5,8 +5,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdvancedEsolang.Syntax", "A
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdvancedEsolang.Cli", "AdvancedEsolang.Cli\AdvancedEsolang.Cli.fsproj", "{F1956B82-6A07-4DAA-B536-8355314191A2}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdvancedEsolang.Interpreter", "AdvancedEsolang.Interpreter\AdvancedEsolang.Interpreter.fsproj", "{B085808F-29F6-4CEF-A4B3-461F164D8057}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdvancedEsolang.Parser", "AdvancedEsolang.Parser\AdvancedEsolang.Parser.fsproj", "{1860BC38-CD05-4C30-843E-22993F9899EC}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdvancedEsolang.Stringifier", "AdvancedEsolang.Stringifier\AdvancedEsolang.Stringifier.fsproj", "{BCC1FFDF-A1EB-43EE-961F-F4DE3EDC3D6F}"
@@ -27,10 +25,6 @@ Global
 		{F1956B82-6A07-4DAA-B536-8355314191A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1956B82-6A07-4DAA-B536-8355314191A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1956B82-6A07-4DAA-B536-8355314191A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B085808F-29F6-4CEF-A4B3-461F164D8057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B085808F-29F6-4CEF-A4B3-461F164D8057}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B085808F-29F6-4CEF-A4B3-461F164D8057}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B085808F-29F6-4CEF-A4B3-461F164D8057}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1860BC38-CD05-4C30-843E-22993F9899EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1860BC38-CD05-4C30-843E-22993F9899EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1860BC38-CD05-4C30-843E-22993F9899EC}.Release|Any CPU.ActiveCfg = Release|Any CPU

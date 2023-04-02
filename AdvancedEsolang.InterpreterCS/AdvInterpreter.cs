@@ -98,8 +98,7 @@ public class AdvInterpreter
 
         for (int i = 0; i < args.Length; i++)
         {
-            locals[method.parameters[i]] =
-                args[i]; //TODO: Make sure that i is never out of bounds of the parameters list
+            locals[method.parameters[i]] = args[i];
         }
 
         AdvObject RunCall(Expression objExpr, string methodName, FSharpList<Expression> args)
