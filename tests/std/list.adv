@@ -1,0 +1,23 @@
+import ../tester
+import ../../std/list
+
+class ListTester extends Tester:
+    method tests():
+        this.pushAndPop()
+    end
+
+    method pushAndPop():
+        variable list = List.init(Array8)
+
+        variable a = True
+
+        list.push(a)
+
+        this.result("List's size after 1 push should be equal to 1", (list.size) is 1)
+        this.result("List's first element should be equal to the one just pushed to it", ((list.array).0) = a)
+
+        list.pop()
+
+        this.result("List's size after pushing and popping should be equal to 0", (list.size) is 0)
+    end
+end

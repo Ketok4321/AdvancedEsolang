@@ -1,0 +1,26 @@
+import builtin/boolean
+import builtin/type_utils
+import std/list
+
+class TestRunner extends Program:
+    field input
+    field output
+
+    field errored
+
+    method main():
+        this.input = Input
+        this.output = Output
+
+        (this.input).program = this
+        (this.output).program = this
+
+        TypeUtilsTester.run(this)
+        BooleanTester.run(this)
+        ListTester.run(this)
+
+        if this.errored:
+            (this.output).write("Some tests failed")
+        end
+    end
+end

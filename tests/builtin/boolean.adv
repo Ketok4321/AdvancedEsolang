@@ -1,0 +1,28 @@
+import ../tester
+
+class BooleanTester extends Tester:
+    method tests():
+        this.not()
+        this.and()
+        this.or()
+    end
+    
+    method not():
+        this.result("!True should return False", !!True)
+        this.result("!False should return True", !False)
+    end
+    
+    method and():
+        this.result("True and True should return True", (True.and(True)) is True)
+        this.result("True and False should return False", (True.and(False)) is False)
+        this.result("False and True should return False", (False.and(True)) is False)
+        this.result("False and False should return False", (False.and(False)) is False)
+    end
+    
+    method or():
+        this.result("True or True should return True", (True.or(True)) is True)
+        this.result("True or False should return True", (True.or(False)) is True)
+        this.result("False or True should return True", (False.or(True)) is True)
+        this.result("False or False should return False", (False.or(False)) is False)
+    end
+end

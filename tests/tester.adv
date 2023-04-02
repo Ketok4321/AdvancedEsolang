@@ -1,0 +1,25 @@
+class Tester extends Object:
+    field runner    
+    
+    method run(runner):
+        this.runner = runner
+        this.tests()
+    end
+    
+    method tests():
+        # abstract
+    end
+    
+    method result(test, result):
+        variable output = (this.runner).output
+
+        output.write(test)
+        if result:
+            output.write("Success!")
+        end
+        if !result:
+            output.write("Failure!!!")
+            (this.runner).errored = True
+        end
+    end
+end
