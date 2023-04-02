@@ -11,7 +11,7 @@ public class AdvObject
 
     public AdvObject(Class @class)
     {
-        if (@class.isAbstract) throw new Exception(); //TODO
+        if (@class.isAbstract) throw AdvException.Abstract(@class);
         
         Class = @class;
     }
@@ -23,7 +23,7 @@ public class AdvObject
 
     public void SetField(string name, AdvObject value)
     {
-        if (!Class.fields.Any(f => f.name == name)) throw new Exception(); //TODO
+        if (!Class.fields.Any(f => f.name == name)) throw AdvException.FieldUndefined(Class, name);
 
         fields[name] = value;
     }
