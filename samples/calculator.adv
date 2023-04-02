@@ -34,11 +34,11 @@ class Calculator extends Program:
         (this.output).program = this
         
         (this.output).write("Number 1:")
-        variable a = TypeUtils.create((this.input).read())
+        variable a = TypeManager.instantiate((this.input).read())
         (this.output).write("Operation [+-*/]:")
         variable op = (this.input).read()
         (this.output).write("Number 2:")
-        variable b = TypeUtils.create((this.input).read())
+        variable b = TypeManager.instantiate((this.input).read())
 
         variable result = Null
         

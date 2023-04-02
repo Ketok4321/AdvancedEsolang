@@ -65,7 +65,7 @@ public class AdvInterpreter
         
         //TODO: String length
         
-        AddBuiltinMethod(("TypeUtils", "create"), false, ctx =>
+        AddBuiltinMethod(("TypeManager", "instantiate"), false, ctx =>
         {
             var name = ((AdvString) ctx.Args[0]).Value; //TODO: Safety
             var type = ctx.Interpreter.Classes.GetValueOrDefault(name) ?? throw AdvException.NameNotFound(name);
@@ -73,7 +73,7 @@ public class AdvInterpreter
             return new AdvObject(type);
         });
         
-        AddBuiltinMethod(("TypeUtils", "typeName"), false, ctx =>
+        AddBuiltinMethod(("TypeManager", "typeName"), false, ctx =>
         {
             return ctx.Args[0].Class.name.ToAdvObject();
         });

@@ -89,20 +89,18 @@ let False = {
     ]
 }
 
-// Utils
-
-let TypeUtils = {
-    name = "TypeUtils"
+let TypeManager = {
+    name = "TypeManager"
     parent = Some Object
     isAbstract = false
     ownMembers = [
-        Method("create", ["typeName"], Builtin)
+        Method("instantiate", ["typeName"], Builtin)
         Method("typeName", ["obj"], Builtin)
     ]
 }
 
 let library = {
     name = "@builtin"
-    classes = [Object; Null; Program; Input; Output; Boolean; True; False; TypeUtils]
+    classes = [Object; Null; Program; Input; Output; Boolean; True; False; TypeManager]
     dependencies = []
 }

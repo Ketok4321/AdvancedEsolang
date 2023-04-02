@@ -1,5 +1,5 @@
 import builtin/boolean
-import builtin/type_utils
+import builtin/type_manager
 import std/list
 
 class TestRunner extends Program:
@@ -15,7 +15,7 @@ class TestRunner extends Program:
         (this.input).program = this
         (this.output).program = this
 
-        TypeUtilsTester.run(this)
+        TypeManagerTester.run(this)
         BooleanTester.run(this)
         ListTester.run(this)
 

@@ -1,0 +1,20 @@
+import ../tester
+
+class TypeManagerTester extends Tester:
+    method tests():
+        this.instantiate()
+        this.typeName()
+    end
+
+    method instantiate():
+        variable creation = TypeManager.instantiate("True")
+
+        this.result("TypeManager.instantiate should create an object of the specified type", creation is True)
+    end
+
+    method typeName():
+        variable a = True
+    
+        this.result("TypeManager.typeName should return the name of the object's type", (TypeManager.typeName(a)).equals("True"))
+    end
+end
