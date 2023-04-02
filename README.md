@@ -1,7 +1,5 @@
-# Advanced Esolang
-Advanced is an object-oriented esolang in which there are no primitives.
-That means that the only way to store data in Advanced is either by the type of the Object, or by its instance.
-For example, ClassNumber (which is one of implementations of numbers for Advanced) stores data using the type of the object, which means that there's a class for every supported number.
+# Advanced Esolang (WIP)
+An esoteric object-oriented programming language with no prmitives.
 
 ## Running Advanced Cli
 To both run, and compile Advanced, .NET 6.0 is required.
