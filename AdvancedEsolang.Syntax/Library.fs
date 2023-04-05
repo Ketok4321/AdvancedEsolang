@@ -42,14 +42,14 @@ with
         | None -> this.ownMembers
     
     member this.fields =
-        this.members |> List.choose (fun m ->
+        this.ownMembers |> List.choose (fun m ->
             match m with
             | :? Field as f -> Some f
             | _ -> None
             )
     
     member this.methods =
-        this.members |> List.choose (fun m ->
+        this.ownMembers |> List.choose (fun m ->
             match m with
             | :? Method as f -> Some f
             | _ -> None
