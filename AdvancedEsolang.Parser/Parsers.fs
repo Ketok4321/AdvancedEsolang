@@ -86,8 +86,12 @@ module Parsers =
         skipString "class" .>> ws1 .>>. name .>> ws1 .>> skipString "extends" .>> ws1 .>>. name .>> skipChar ':' .>> ws .>>.
         manyTill (classMember .>> ws) (skipString "end") .>>.
         getUserState
-        |>> (fun ((((abst, name), parent), members), library) -> { name = name; parent = Some library.classDict[parent]; isAbstract = abst.IsSome; ownMembers = members  })
-        >>= (fun c -> updateUserState (fun p -> { p with classes = c :: p.classes }) >>. preturn c)
+        |>> (fun ((((abst, name), parent), members), library) -> library, { name = name; parent = Some library.classDict[parent]; isAbstract = abst.IsSome; ownMembers = members  })
+        >>= (fun (l, c) ->
+            if l.classes |> List.exists (fun c2 -> c2.name = c.name) then
+                fail $"Class named '%s{c.name}' is already defined"
+            else
+                updateUserState (fun p -> { p with classes = c :: p.classes }) >>. preturn c)
     
     let import depProvider = skipString "import" .>> ws1 >>. filename .>> newline >>= (fun i -> updateUserState (fun p -> { p with dependencies = depProvider i :: p.dependencies }))
 
