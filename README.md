@@ -1,5 +1,6 @@
 # Advanced Esolang (WIP)
-An esoteric object-oriented programming language with no prmitives.
+An object-oriented esolang.
+Its name comes from the fact that it contains no primitives, and basics things like numbers or arrays must be implemented using classes.
 
 ## Running Advanced Cli
 To both run, and compile Advanced, .NET 6.0 is required.
