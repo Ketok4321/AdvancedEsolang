@@ -133,7 +133,7 @@ let main argv =
 
             printfn "Stringifying..."
             let libraryStr = Stringifier.sLibrary library
-            printfn "Stringied in %i ms." watch.ElapsedMilliseconds
+            printfn "Stringified in %i ms." watch.ElapsedMilliseconds
             watch.Restart()
 
             printfn "Saving..."
