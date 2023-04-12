@@ -122,7 +122,8 @@ public class AdvInterpreter
                 Expression.Is { objExpr: var objExpr, className: var className } when Classes.ContainsKey(className) => RunExpression(objExpr).Class.@is(Classes[className]).ToAdvObject(),
                 Expression.Is { objExpr: var objExpr, className: var className } => throw AdvException.Is(RunExpression(objExpr), className),
                 Expression.Equals {objExpr1: var objExpr1, objExpr2: var objExpr2} => (RunExpression(objExpr1) == RunExpression(objExpr2)).ToAdvObject(),
-                Expression.String { text: var text } => new AdvString(text)
+                Expression.String { text: var text } => new AdvString(text),
+                _ => throw new /*Unreachable*/Exception() //TODO: Change this in .NET 7+
             };
         }
 
