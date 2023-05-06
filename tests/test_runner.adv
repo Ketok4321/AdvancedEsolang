@@ -1,5 +1,5 @@
 import builtin/boolean
-import builtin/type_manager
+import builtin/mirror
 import std/list
 
 class TestRunner extends Program:
@@ -15,7 +15,7 @@ class TestRunner extends Program:
         (this.input).program = this
         (this.output).program = this
 
-        TypeManagerTester.run(this)
+        MirrorTester.run(this)
         BooleanTester.run(this)
         ListTester.run(this)
 

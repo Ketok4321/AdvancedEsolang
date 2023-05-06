@@ -7,7 +7,7 @@ using AdvancedEsolang.Syntax;
 public record BuiltinMethodCtx(AdvInterpreter Interpreter, AdvObject Self, AdvObject[] Args);
 internal record BuiltinMethod(bool RequiresProgram, Func<BuiltinMethodCtx, AdvObject?> OnCall);
 
-public class AdvInterpreter
+public sealed partial class AdvInterpreter
 {
     public readonly Library ProgramLib;
     public readonly AdvObject ProgramObj;
@@ -42,43 +42,6 @@ public class AdvInterpreter
         });
     }
 
-    private void InitBuiltinMethods()
-    {
-        AddBuiltinMethod(("Output", "write"), true, ctx =>
-        {
-            Console.WriteLine(ctx.Args[0]);
-        });
-        
-        AddBuiltinMethod(("Input", "read"), true, ctx =>
-        {
-            Console.Write("> ");
-            return Console.ReadLine()?.ToAdvObject();
-        });
-        
-        AddBuiltinMethod(("String", "equals"), false, ctx =>
-        {
-            var str1 = (AdvString) ctx.Self;
-            var str2 = (AdvString) ctx.Args[0]; //TODO: Type safety
-        
-            return (str1.Value == str2.Value).ToAdvObject();
-        });
-        
-        //TODO: String length
-        
-        AddBuiltinMethod(("TypeManager", "instantiate"), false, ctx =>
-        {
-            var name = ((AdvString) ctx.Args[0]).Value; //TODO: Safety
-            var type = ctx.Interpreter.Classes.GetValueOrDefault(name) ?? throw AdvException.NameNotFound(name);
-            
-            return new AdvObject(type);
-        });
-        
-        AddBuiltinMethod(("TypeManager", "typeName"), false, ctx =>
-        {
-            return ctx.Args[0].Class.name.ToAdvObject();
-        });
-    }
-    
     public void Run()
     {
         var mainMethod = ProgramObj.Class.get<Method>("main").ToNullable()!; // This should never return null, because method 'main' is already defined in the parent class

@@ -1,0 +1,56 @@
+import ../tester
+
+class MirrorTester extends Tester:
+    field mirror
+    
+    method tests():
+        this.mirror = Mirror.reflecting("MirrorTester_TestClass")
+
+        this.instantiate()
+        this.typeName()
+        this.parent()
+        this.isAbstract()
+        this.field()
+    end
+
+    method instantiate():
+        variable creation = Mirror.instantiate("True")
+
+        this.result("Mirror.instantiate should create an object of the specified type", creation is True)
+    end
+
+    method typeName():
+        variable a = True
+    
+        this.result("Mirror.typeName should return the name of the object's type", (Mirror.typeName(a)).equals("True"))
+    end
+
+    method parent():
+        this.result("Mirror.parent should return the name of the type's parent", ((this.mirror).parent()).equals("MirrorTester_TestBaseClass"))
+    end
+
+    method isAbstract():
+        variable mirrorBase = Mirror.reflecting("MirrorTester_TestBaseClass")
+
+        this.result("Mirror.isAbstract should return false for a non-abstract class", ((this.mirror).isAbstract()) is False)
+        this.result("Mirror.isAbstract should return true for an abstract class", (mirrorBase.isAbstract()) is True)
+    end
+
+    method field():
+        this.result("Mirror.field should return the name of the field when it exists #1", ((this.mirror).field(0)).equals("a"))
+        this.result("Mirror.field should return the name of the field when it exists #2", ((this.mirror).field(1)).equals("b"))
+        this.result("Mirror.field should return Null when the field doesn't exist", ((this.mirror).field(2)) is Null)
+    end
+
+    # 'method' method probably doesn't need any testing because of how similar to 'field' it is
+end
+
+abstract class MirrorTester_TestBaseClass extends Object:
+
+end
+
+
+class MirrorTester_TestClass extends MirrorTester_TestBaseClass:
+    field a
+    field b
+end
