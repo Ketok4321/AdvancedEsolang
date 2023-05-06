@@ -1,0 +1,28 @@
+import ../tester
+import ../../std/amirror
+import ../../generated/array
+
+class AMirrorTester extends Tester:
+    method tests():
+        this.fields()
+    end
+
+    method fields():
+        variable mirror = AMirror.reflecting("AMirrorTester_TestClass")
+        variable fields = mirror.fields(Array4)
+
+        this.result("The length of a list returned by AMirror.fields should be correct", (fields.size) is 3)
+
+        variable a = ((fields.array).0).equals("a")
+        variable b = ((fields.array).1).equals("b")
+        variable c = ((fields.array).2).equals("c")
+
+        this.result("The contents of a list returned by AMirror.fields should be correct", (a.and(b)).and(c))
+    end
+end
+
+class AMirrorTester_TestClass extends Object:
+    field a
+    field b
+    field c
+end

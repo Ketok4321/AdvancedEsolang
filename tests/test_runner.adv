@@ -1,6 +1,7 @@
 import builtin/boolean
 import builtin/mirror
 import std/list
+import std/amirror
 
 class TestRunner extends Program:
     field input
@@ -15,9 +16,10 @@ class TestRunner extends Program:
         (this.input).program = this
         (this.output).program = this
 
-        MirrorTester.run(this)
         BooleanTester.run(this)
+        MirrorTester.run(this)
         ListTester.run(this)
+        AMirrorTester.run(this)
 
         if this.errored:
             (this.output).write("Some tests failed")

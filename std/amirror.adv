@@ -1,0 +1,36 @@
+import list
+
+# A stands for Advanced 
+class AMirror extends Mirror:
+    method fields(maxArray):
+        variable list = List.init(maxArray)
+
+        variable i = 0
+        variable field = this.field(i)
+        while !(field is Null):
+            list.push(field)
+            
+            variable i = i.++()
+            
+            variable field = this.field(i)
+        end
+
+        return list
+    end
+
+    method methods(maxArray):
+        variable list = List.init(maxArray)
+
+        variable i = 0
+        variable method = this.method(i)
+        while !(method is Null):
+            list.push(method)
+            
+            variable i = i.++()
+            
+            variable method = this.method(i)
+        end
+
+        return list
+    end
+end
