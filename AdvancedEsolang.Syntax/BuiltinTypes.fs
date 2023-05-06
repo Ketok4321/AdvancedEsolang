@@ -19,7 +19,7 @@ let Null = {
 
 let String = {
     name = "String"
-    parent = Some Object  //TODO: ?
+    parent = None
     isAbstract = false
     ownMembers = [
         Method("equals", ["s"], Builtin)
