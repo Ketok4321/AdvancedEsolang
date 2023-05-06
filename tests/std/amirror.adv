@@ -1,6 +1,5 @@
 import ../tester
 import ../../std/amirror
-import ../../generated/array
 
 class AMirrorTester extends Tester:
     method tests():
