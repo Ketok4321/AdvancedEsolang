@@ -22,8 +22,6 @@ public sealed partial class AdvInterpreter
 
             return (str1.Value == str2.Value).ToAdvObject();
         });
-
-        //TODO: String length
     }
 
     private void InitIO()
