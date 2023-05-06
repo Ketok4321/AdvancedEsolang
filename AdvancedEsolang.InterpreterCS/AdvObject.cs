@@ -23,7 +23,7 @@ public class AdvObject
 
     public void SetField(string name, AdvObject value)
     {
-        if (!Class.fields.Any(f => f.name == name)) throw AdvException.FieldUndefined(Class, name);
+        if (Class.get<Field>(name).ToNullable() == null) throw AdvException.FieldUndefined(Class, name);
 
         fields[name] = value;
     }
