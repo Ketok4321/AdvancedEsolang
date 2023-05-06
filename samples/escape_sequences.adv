@@ -1,0 +1,9 @@
+class EscapeSequences extends Program:
+    field output
+    method main():
+        this.output = Output
+        (this.output).program = this
+
+        (this.output).write("Hello world!\nNewline!\n\"Quotes!\"")
+    end
+end
