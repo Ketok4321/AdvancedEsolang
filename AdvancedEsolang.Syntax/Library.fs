@@ -36,7 +36,7 @@ with
             | Some parent -> parent.is(_class)
             | None -> false
         
-    member this.members =
+    member this.members = //TODO: Fix allocations
         match this.parent with
         | Some parent -> List.concat [this.ownMembers; parent.members] |> List.distinctBy (fun m -> m.name)
         | None -> this.ownMembers

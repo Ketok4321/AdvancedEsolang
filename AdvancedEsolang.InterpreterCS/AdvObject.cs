@@ -5,13 +5,14 @@ public class AdvObject
     public static AdvObject Null => new AdvObject(BuiltinTypes.Null);
     
     public readonly Class Class;
-    private Dictionary<string, AdvObject> fields = new Dictionary<string, AdvObject>();
+    private readonly Dictionary<string, AdvObject> fields;
 
     public AdvObject(Class @class)
     {
         if (@class.isAbstract) throw AdvException.Abstract(@class);
         
         Class = @class;
+        fields = @class.fields.ToDictionary(f => f.name, _ => Null);
     }
 
     public AdvObject GetField(string name)
