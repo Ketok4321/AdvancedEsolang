@@ -1,0 +1,16 @@
+import ../generated/class_number
+import ../generated/array
+import ../std/list
+
+class REPL extends Program:
+    method main():
+        variable input = Input
+        input.program = this
+        variable output = Output
+        output.program = this
+
+        while True:
+            eval input.read()
+        end
+    end
+end
