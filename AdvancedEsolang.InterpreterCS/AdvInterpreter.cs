@@ -10,16 +10,19 @@ public sealed class AdvInterpreter
 
     public readonly IReadOnlyDictionary<string, Class> Classes;
 
+    public readonly Func<string, IEnumerable<Statement>>? EvalParser;
+
     private readonly Dictionary<(string, string), BuiltinMethod> builtinMethods =
         new Dictionary<(string, string), BuiltinMethod>();
 
-    public AdvInterpreter(Library programLib)
+    public AdvInterpreter(Library programLib, Func<string, IEnumerable<Statement>>? evalParser = null)
     {
         var programClass = programLib.classes.FirstOrDefault(c => c.@is(BuiltinTypes.Program) && !c.isAbstract) ??
                            throw AdvException.ProgramNotFound(programLib);
         ProgramLib = programLib;
         ProgramObj = new AdvObject(programClass);
         Classes = ProgramLib.classDict;
+        EvalParser = evalParser;
         
         BuiltinMethods.AddAll(this);
     }
@@ -88,7 +91,7 @@ public sealed class AdvInterpreter
 
         AdvObject? result = null;
         
-        void RunStatements(FSharpList<Statement> statements)
+        void RunStatements(IEnumerable<Statement> statements)
         {
             foreach (var statement in statements)
             {
@@ -118,6 +121,22 @@ public sealed class AdvInterpreter
                         while (RunExpression(condition).Class.@is(BuiltinTypes.True))
                         {
                             RunStatements(stmts);
+                        }
+                        break;
+                    case Statement.Eval { expr: var expr }:
+                        if (EvalParser == null)
+                        {
+                            throw AdvException.CallUndefined(BuiltinTypes.Program, "eval"); // The class provided is kinda a lie but that's not a priority right now
+                        }
+                        
+                        if(RunExpression(expr) is AdvString { Value: var code })
+                        {
+                            IEnumerable<Statement> eStatements = EvalParser(code);
+                            RunStatements(eStatements);
+                        }
+                        else
+                        {
+                            throw AdvException.CallInvalidArgument(BuiltinTypes.Program, "eval"); // The class provided is kinda a lie but that's not a priority right now
                         }
                         break;
                 }

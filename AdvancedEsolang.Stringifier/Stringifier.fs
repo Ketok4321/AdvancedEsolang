@@ -38,6 +38,7 @@ and sStmt = function
     | Return expr -> $"return {sExpr expr}"
     | If (cond, stmts) -> $"if {sExpr cond}:\n{sStmts stmts}\nend"
     | While (cond, stmts) -> $"while {sExpr cond}:\n{sStmts stmts}\nend"
+    | Eval expr -> $"eval {sExpr expr}"
 
 and sStmts = List.map sStmt >> String.concat "\n" >> tab
 

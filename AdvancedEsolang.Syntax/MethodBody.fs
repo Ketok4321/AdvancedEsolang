@@ -15,3 +15,4 @@ type Statement =
     | Return of result: Expression
     | If of condition: Expression * stmts: Statement list
     | While of condition: Expression * stmts: Statement list
+    | Eval of expr: Expression

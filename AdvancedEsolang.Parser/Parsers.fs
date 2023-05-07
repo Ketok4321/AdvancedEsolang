@@ -78,12 +78,14 @@ module Parsers =
         let rtrn = skipString "return" .>> ws1 >>. expr |>> Return
         let _if = skipString "if" .>> ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> If(cond, stmts)
         let _while = skipString "while" .>> ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> While(cond, stmts)
+        let eval = skipString "eval" .>> ws1 >>. expr |>> Eval
 
         do stmtImpl := choice [
             setV
             rtrn
             _if
             _while
+            eval
             attempt call
             setF
         ]

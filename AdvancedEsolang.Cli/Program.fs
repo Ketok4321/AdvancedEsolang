@@ -103,7 +103,14 @@ let main argv =
         match result.GetSubCommand() with
         | Version -> printfn "%s" (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
         | Run r ->
-            let interpreter = AdvInterpreter(read (r.GetResult(RunArgs.Path)))
+            let evalParser = System.Func<string, Statement seq>(fun text ->
+                match runParserOnString Parsers.stmts BuiltinTypes.library "eval" (text + "\nend") with
+                | Success (res, _, _) ->
+                    res
+                | Failure (message, error, _) -> failwith message
+            )
+            
+            let interpreter = AdvInterpreter(read (r.GetResult(RunArgs.Path)), evalParser)
             interpreter.Run()
         | Format r ->
             let path = r.GetResult(FormatArgs.Path)

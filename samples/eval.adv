@@ -1,0 +1,27 @@
+class EvalExample extends Program:
+    field input
+    field output
+
+    method main():
+        this.input = Input
+        this.output = Output
+
+        (this.input).program = this
+        (this.output).program = this
+
+        variable input = (this.input).read()
+        EvalJail.safeEvalExample(input, this.output)
+    end
+end
+
+# Prevent evaluated code from accessing "this"
+class EvalJail extends Object:
+    # Prevent evaluated code from accessing locals
+    method simpleSafeEval(code):
+        eval code
+    end
+
+    method safeEvalExample(code, output): # Allow the evaluated code to access output
+        eval code
+    end
+end
