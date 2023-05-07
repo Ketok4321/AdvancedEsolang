@@ -1,9 +1,5 @@
 ﻿namespace AdvancedEsolang.InterpreterCS;
 
-using System;
-using Microsoft.FSharp.Collections;
-using AdvancedEsolang.Syntax;
-
 public record BuiltinMethodCtx(AdvInterpreter Interpreter, AdvObject Self, AdvObject[] Args, Method Method);
 internal record BuiltinMethod(bool RequiresProgram, Func<BuiltinMethodCtx, AdvObject?> OnCall);
 

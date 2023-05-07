@@ -1,7 +1,5 @@
 namespace AdvancedEsolang.InterpreterCS;
 
-using AdvancedEsolang.Syntax;
-
 public static class BuiltinMethods
 {
     private static string GetString(BuiltinMethodCtx ctx, AdvObject obj)

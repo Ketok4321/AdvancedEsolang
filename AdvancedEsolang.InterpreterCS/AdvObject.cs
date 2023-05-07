@@ -1,7 +1,5 @@
 namespace AdvancedEsolang.InterpreterCS;
 
-using AdvancedEsolang.Syntax;
-
 public class AdvObject
 {
     public static AdvObject Null => new AdvObject(BuiltinTypes.Null);
