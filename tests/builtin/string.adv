@@ -1,10 +1,6 @@
 import ../tester
 
 class StringTester extends Tester:
-    method tests():
-        this.+()
-    end
-
     method +():
         this.result("\"a\" + \"b\" should equal \"ab\"", ("a" + "b").equals("ab"))
     end

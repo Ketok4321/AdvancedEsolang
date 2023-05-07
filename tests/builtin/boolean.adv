@@ -1,12 +1,6 @@
 import ../tester
 
 class BooleanTester extends Tester:
-    method tests():
-        this.not()
-        this.and()
-        this.or()
-    end
-    
     method not():
         this.result("!True should return False", !!True)
         this.result("!False should return True", !False)

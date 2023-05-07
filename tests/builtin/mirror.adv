@@ -3,14 +3,8 @@ import ../tester
 class MirrorTester extends Tester:
     field mirror
     
-    method tests():
+    method init():
         this.mirror = Mirror.reflecting("MirrorTester_TestClass")
-
-        this.instantiate()
-        this.typeName()
-        this.parent()
-        this.isAbstract()
-        this.field()
     end
 
     method instantiate():

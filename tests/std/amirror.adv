@@ -2,10 +2,6 @@ import ../tester
 import ../../std/amirror
 
 class AMirrorTester extends Tester:
-    method tests():
-        this.fields()
-    end
-
     method fields():
         variable mirror = AMirror.reflecting("AMirrorTester_TestClass")
         variable fields = mirror.fields(Array4)

@@ -1,13 +1,27 @@
+import ../generated/class_number
+
 class Tester extends Object:
     field runner    
     
     method run(runner):
         this.runner = runner
-        this.tests()
+        
+        this.init()
+
+        variable mirror = Mirror.reflecting(Mirror.typeName(this))
+        
+        variable i = 0
+        while !((mirror.method(i)) is Null):
+            if !((mirror.method(i)).equals("init")):
+                eval ("this." + (mirror.method(i))) + "()"
+            end
+
+            variable i = i.++()
+        end
     end
-    
-    method tests():
-        # abstract
+
+    method init():
+
     end
     
     method result(test, result):

@@ -2,10 +2,6 @@ import ../tester
 import ../../std/list
 
 class ListTester extends Tester:
-    method tests():
-        this.pushAndPop()
-    end
-
     method pushAndPop():
         variable list = List.init(Array8)
 
