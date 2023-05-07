@@ -32,6 +32,14 @@ public static class BuiltinMethods
 
             return (str1 == str2).ToAdvObject();
         });
+        
+        i.AddBuiltinMethod(("String", "+"), false, ctx =>
+        {
+            var str1 = GetString(ctx, ctx.Self);
+            var str2 = GetString(ctx, ctx.Args[0]);
+
+            return (str1 + str2).ToAdvObject();
+        });
     }
 
     public static void AddIO(AdvInterpreter i)

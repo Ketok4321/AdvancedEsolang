@@ -23,6 +23,7 @@ let String = {
     isAbstract = false
     ownMembers = [
         Method("equals", ["s"], Builtin)
+        Method("+", ["s"], Builtin)
     ]
 }
 
