@@ -4,10 +4,10 @@ using System;
 using Microsoft.FSharp.Collections;
 using AdvancedEsolang.Syntax;
 
-public record BuiltinMethodCtx(AdvInterpreter Interpreter, AdvObject Self, AdvObject[] Args);
+public record BuiltinMethodCtx(AdvInterpreter Interpreter, AdvObject Self, AdvObject[] Args, Method Method);
 internal record BuiltinMethod(bool RequiresProgram, Func<BuiltinMethodCtx, AdvObject?> OnCall);
 
-public sealed partial class AdvInterpreter
+public sealed class AdvInterpreter
 {
     public readonly Library ProgramLib;
     public readonly AdvObject ProgramObj;
@@ -25,7 +25,7 @@ public sealed partial class AdvInterpreter
         ProgramObj = new AdvObject(programClass);
         Classes = ProgramLib.classDict;
         
-        InitBuiltinMethods();
+        BuiltinMethods.AddAll(this);
     }
 
     public void AddBuiltinMethod((string, string) name, bool requiresProgram, Func<BuiltinMethodCtx, AdvObject?> onCall)
@@ -152,7 +152,7 @@ public sealed partial class AdvInterpreter
             if (builtinMethod.RequiresProgram && self.GetField("program") != ProgramObj)
                 throw AdvException.CallNoProgram(self.Class, method);
 
-            return builtinMethod.OnCall(new BuiltinMethodCtx(this, self, args)) ?? AdvObject.Null;
+            return builtinMethod.OnCall(new BuiltinMethodCtx(this, self, args, method)) ?? AdvObject.Null;
         }
 
         throw AdvException.CallEmpty(self.Class, method.name);
