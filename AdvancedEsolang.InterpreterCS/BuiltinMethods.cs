@@ -40,6 +40,16 @@ public static class BuiltinMethods
 
             return (str1 + str2).ToAdvObject();
         });
+        
+        i.AddBuiltinMethod(("String", "at"), false, ctx =>
+        {
+            var str = GetString(ctx, ctx.Self);
+            var index = GetInt(ctx, ctx.Args[0]);
+
+            if (index >= str.Length || index < 0) return null;
+            
+            return str[index].ToString().ToAdvObject();
+        });
     }
 
     public static void AddIO(AdvInterpreter i)

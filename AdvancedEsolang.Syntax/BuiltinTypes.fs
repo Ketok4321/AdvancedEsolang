@@ -24,6 +24,7 @@ let String = {
     ownMembers = [
         Method("equals", ["s"], Builtin)
         Method("+", ["s"], Builtin)
+        Method("at", ["index"], Builtin)
     ]
 }
 
