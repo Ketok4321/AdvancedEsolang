@@ -113,6 +113,6 @@ let Mirror = {
 
 let library = {
     name = "@builtin"
-    classes = [Object; Null; Program; Input; Output; Boolean; True; False; Mirror]
+    classes = [Object; Null; String; Program; Input; Output; Boolean; True; False; Mirror]
     dependencies = []
 }

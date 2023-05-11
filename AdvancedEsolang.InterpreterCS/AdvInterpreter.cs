@@ -23,8 +23,6 @@ public sealed class AdvInterpreter
         ProgramObj = new AdvObject(programClass);
         Classes = ProgramLib.classDict;
         EvalParser = evalParser;
-        
-        BuiltinMethods.AddAll(this);
     }
 
     public void AddBuiltinMethod((string, string) name, bool requiresProgram, Func<BuiltinMethodCtx, AdvObject?> onCall)

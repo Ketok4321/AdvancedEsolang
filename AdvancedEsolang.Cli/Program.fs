@@ -111,6 +111,7 @@ let main argv =
             )
             
             let interpreter = AdvInterpreter(read (r.GetResult(RunArgs.Path)), evalParser)
+            BuiltinMethods.AddAll(interpreter)
             interpreter.Run()
         | Format r ->
             let path = r.GetResult(FormatArgs.Path)

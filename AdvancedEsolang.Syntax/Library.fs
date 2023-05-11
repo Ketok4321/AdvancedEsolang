@@ -55,7 +55,7 @@ with
             | _ -> None
         | None -> None
     
-    override this.Equals obj = //TODO: is it still necessary?
+    override this.Equals obj =
         match obj with
         | :? Class as _class -> this.name = _class.name
         | _ -> false

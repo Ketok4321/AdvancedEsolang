@@ -18,12 +18,12 @@ public static class BuiltinMethods
     
     public static void AddAll(AdvInterpreter i)
     {
-        AddPrimitives(i);
+        AddStrings(i);
         AddIO(i);
         AddMirror(i);
     }
 
-    public static void AddPrimitives(AdvInterpreter i)
+    public static void AddStrings(AdvInterpreter i)
     {
         i.AddBuiltinMethod(("String", "equals"), false, ctx =>
         {
