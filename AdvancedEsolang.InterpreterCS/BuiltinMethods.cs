@@ -93,21 +93,21 @@ public static class BuiltinMethods
             return type.isAbstract.ToAdvObject();
         });
 
-        Func<BuiltinMethodCtx, AdvObject?> GetByIndex<T>(Func<Class, IReadOnlyList<T>> listProvider) where T : ClassMember
+        Func<BuiltinMethodCtx, AdvObject?> GetByIndex<T>() where T : ClassMember
         {
             return ctx =>
             {
                 var type = GetToReflect(ctx);
                 var index = GetInt(ctx, ctx.Args[0]);
 
-                var list = listProvider(type);
+                var list = type.ownMembersOfType<T>();
 
-                if (index >= list.Count || index < 0) return null;
+                if (index >= list.Length || index < 0) return null;
                 return list[index].name.ToAdvObject();
             };
         }
         
-        i.AddBuiltinMethod(("Mirror", "field"), false, GetByIndex(t => t.fields));
-        i.AddBuiltinMethod(("Mirror", "method"), false, GetByIndex(t => t.methods));
+        i.AddBuiltinMethod(("Mirror", "field"), false, GetByIndex<Field>());
+        i.AddBuiltinMethod(("Mirror", "method"), false, GetByIndex<Method>());
     }
 }

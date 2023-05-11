@@ -36,19 +36,8 @@ with
             | Some parent -> parent.is(_class)
             | None -> false
     
-    member this.fields =
-        this.ownMembers |> List.choose (fun m ->
-            match m with
-            | :? Field as f -> Some f
-            | _ -> None
-            )
-    
-    member this.methods =
-        this.ownMembers |> List.choose (fun m ->
-            match m with
-            | :? Method as f -> Some f
-            | _ -> None
-            )
+    member this.ownMembersOfType<'t when 't :> ClassMember> () =
+        this.ownMembers |> Seq.filter (fun x -> x :? 't) |> Seq.cast<'t> |> Seq.toList
     
     member this.getMember name =
         match this.ownMembers |> List.tryFind (fun m -> m.name = name) with
@@ -66,7 +55,7 @@ with
             | _ -> None
         | None -> None
     
-    override this.Equals obj =
+    override this.Equals obj = //TODO: is it still necessary?
         match obj with
         | :? Class as _class -> this.name = _class.name
         | _ -> false

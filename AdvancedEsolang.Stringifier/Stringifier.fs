@@ -58,13 +58,15 @@ and sClass (_class: Class) =
         | Some parent -> $" extends {parent.name}:\n"
         | None -> ":\n"
 
-        if _class.fields.Length > 0 then
-            _class.fields
+        let fields, methods = _class.ownMembersOfType<Field> (), _class.ownMembersOfType<Method> ()
+        
+        if fields.Length > 0 then
+            fields
                 |> List.map sField
                 |> String.concat "\n" |> tab
             tab "\n" + "\n"
         
-        _class.methods
+        methods
             |> List.map sMethod
             |> String.concat "\n\n" |> tab
         

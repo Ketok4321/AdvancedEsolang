@@ -7,12 +7,12 @@ public class AdvObject
     public readonly Class Class;
     private readonly Dictionary<string, AdvObject> fields;
 
-    public AdvObject(Class @class)
+    public AdvObject(Class type)
     {
-        if (@class.isAbstract) throw AdvException.Abstract(@class);
+        if (type.isAbstract) throw AdvException.Abstract(type);
         
-        Class = @class;
-        fields = @class.fields.ToDictionary(f => f.name, _ => Null);
+        Class = type;
+        fields = new Dictionary<string, AdvObject>(); //TODO: This could probably be optimized by setting a capacity; The fields should ideally initialize to Null on object creation
     }
 
     public AdvObject GetField(string name)
@@ -33,7 +33,7 @@ public class AdvObject
     }
 }
 
-public class AdvString : AdvObject
+public sealed class AdvString : AdvObject
 {
     public readonly string Value;
 
