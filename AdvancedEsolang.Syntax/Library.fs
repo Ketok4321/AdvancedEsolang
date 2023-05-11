@@ -35,11 +35,6 @@ with
             match this.parent with
             | Some parent -> parent.is(_class)
             | None -> false
-        
-    member this.members = //TODO: Fix allocations
-        match this.parent with
-        | Some parent -> List.concat [this.ownMembers; parent.members] |> List.distinctBy (fun m -> m.name)
-        | None -> this.ownMembers
     
     member this.fields =
         this.ownMembers |> List.choose (fun m ->
@@ -56,8 +51,13 @@ with
             )
     
     member this.getMember name =
-        this.members |> List.tryFind (fun m -> m.name = name)
-    
+        match this.ownMembers |> List.tryFind (fun m -> m.name = name) with
+        | Some m -> Some m
+        | None ->            
+            match this.parent with
+            | Some parent -> parent.getMember name
+            | None -> None
+
     member this.get<'a when 'a :> ClassMember> name =
         match this.getMember name with
         | Some mem ->
