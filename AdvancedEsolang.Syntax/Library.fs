@@ -80,14 +80,10 @@ with
         
         result
         
-(*    member this.getClass name =
+    member this.getClass name =
         match this.classes |> List.tryFind (fun c -> c.name = name) with
         | Some _class -> Some _class
         | None ->
             match this.dependencies |> List.tryFind (fun d -> d.getClass(name) <> None) with
             | Some dep -> dep.getClass(name)
             | None -> None
-            // this.dependencies
-            //     |> List.map (fun p -> p.classes)
-            //     |> List.concat
-            //     |> List.tryFind (fun c -> c.name = name)*)
