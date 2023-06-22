@@ -23,20 +23,6 @@ module Parsers =
     let stmts = ws >>. manyTill (stmt .>> ws) (skipString "end")
 
     let call = exprP .>> skipChar '.' .>>. name .>>. listOf expr
-    
-    let escapedChar: Parser<_, Library> =
-        [
-            ("\\\"",'\"')      // quote
-            ("\\\\",'\\')      // reverse solidus
-            ("\\/",'/')        // solidus
-            ("\\b",'\b')       // backspace
-            ("\\f",'\f')       // formfeed
-            ("\\n",'\n')       // newline
-            ("\\r",'\r')       // cr
-            ("\\t",'\t')       // tab
-        ]
-        |> List.map (fun (toMatch, result) -> pstring toMatch >>% result)
-        |> choice
 
     module Expression =
         let operator o = exprP .>> ws .>> skipString o .>> ws .>>. exprP
@@ -48,7 +34,7 @@ module Parsers =
         let equals = operator "=" |>> Equals
         let notEquals = operator "!=" |>> Equals |>> fun o -> CallExpr(o, "not", [])
         let _not = skipChar '!' >>. exprP |>> fun o -> CallExpr(o, "not", [])
-        let string = skipChar '"' >>. manyCharsTill (escapedChar <|> anyChar) (skipChar '"') |>> String
+        let string = skipChar '"' >>. manyCharsTill (anyChar) (skipChar '"') |>> String
         
         let userDefinedOp o = operator o |>> fun (o1, o2) -> CallExpr(o1, o, [o2])
 
