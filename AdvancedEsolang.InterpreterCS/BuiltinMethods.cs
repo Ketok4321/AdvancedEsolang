@@ -25,6 +25,13 @@ public static class BuiltinMethods
 
     public static void AddStrings(AdvInterpreter i)
     {
+        i.AddBuiltinMethod(("String", "char"), false, ctx =>
+        {
+            var n = GetInt(ctx, ctx.Args[0]);
+
+            return Convert.ToChar(n).ToString().ToAdvObject();
+        });
+        
         i.AddBuiltinMethod(("String", "equals"), false, ctx =>
         {
             var str1 = GetString(ctx, ctx.Self);

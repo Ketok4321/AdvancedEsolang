@@ -1,0 +1,19 @@
+import ../generated/class_number
+
+class StringEscaping extends Program:
+    field newline
+    field quote
+    
+    field output
+
+    method main():
+        this.newline = String.char(10)
+        this.quote = String.char(34)
+
+        this.output = Output
+        (this.output).program = this
+
+        (this.output).write(("Hello world!" + (this.newline)) + "Newline!")
+        (this.output).write(((this.quote) + "Qutoes!") + (this.quote))
+    end
+end

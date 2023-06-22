@@ -22,6 +22,8 @@ let String = {
     parent = None
     isAbstract = false
     ownMembers = [
+        Method("char", ["n"], Builtin)
+        
         Method("equals", ["s"], Builtin)
         Method("+", ["s"], Builtin)
         Method("at", ["index"], Builtin)
