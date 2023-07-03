@@ -22,15 +22,15 @@ module Parsers =
     let stmt, private stmtImpl = createParserForwardedToRef<Statement, Library> ()
     let stmts = ws >>. manyTill (stmt .>> ws) (skipString "end")
 
-    let call = exprP .>> skipChar '.' .>>. name .>>. listOf expr
+    let call = exprP .>>? skipChar '.' .>>. name .>>.? listOf expr
 
     module Expression =
-        let operator o = exprP .>> ws .>> skipString o .>> ws .>>. exprP
+        let operator o = exprP .>>? ws .>>? skipString o .>> ws .>>. exprP
         
         let get = name |>> Get
-        let readF = exprP .>> skipChar '.' .>>. name |>> GetF
+        let readF = exprP .>>? skipChar '.' .>>. name |>> GetF
         let call = call |>> fun ((objExpr, methodName), args) -> CallExpr(objExpr, methodName, args)
-        let is = exprP .>> ws1 .>> skipString "is" .>> ws1 .>>. name |>> Is
+        let is = exprP .>>? ws1 .>>? skipString "is" .>> ws1 .>>. name |>> Is
         let equals = operator "=" |>> Equals
         let notEquals = operator "!=" |>> Equals |>> fun o -> CallExpr(o, "not", [])
         let _not = skipChar '!' >>. exprP |>> fun o -> CallExpr(o, "not", [])
@@ -39,15 +39,15 @@ module Parsers =
         let userDefinedOp o = operator o |>> fun (o1, o2) -> CallExpr(o1, o, [o2])
 
         do exprImpl := choice [
-            attempt call
-            attempt readF
-            attempt is
-            attempt equals
-            attempt notEquals
-            attempt (userDefinedOp "+")
-            attempt (userDefinedOp "-")
-            attempt (userDefinedOp "*")
-            attempt (userDefinedOp "/")
+            call
+            readF
+            is
+            equals
+            notEquals
+            userDefinedOp "+"
+            userDefinedOp "-"
+            userDefinedOp "*"
+            userDefinedOp "/"
             simpleExpr
         ]
 
@@ -58,13 +58,13 @@ module Parsers =
         ]
 
     module Statement =
-        let setV = skipString "variable" .>> ws1 >>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> SetV
-        let setF = exprP .>> skipChar '.' .>>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> fun ((objExpr, fieldName: string), value) -> SetF(objExpr, fieldName, value)
+        let setV = skipString "variable" .>>? ws1 >>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> SetV
+        let setF = exprP .>>? skipChar '.' .>>. name .>> ws .>>? skipString "=" .>> ws .>>. expr |>> fun ((objExpr, fieldName: string), value) -> SetF(objExpr, fieldName, value)
         let call = call |>> fun ((objExpr, methodName), args) -> CallStmt(objExpr, methodName, args)
-        let rtrn = skipString "return" .>> ws1 >>. expr |>> Return
-        let _if = skipString "if" .>> ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> If(cond, stmts)
-        let _while = skipString "while" .>> ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> While(cond, stmts)
-        let eval = skipString "eval" .>> ws1 >>. expr |>> Eval
+        let rtrn = skipString "return" .>>? ws1 >>. expr |>> Return
+        let _if = skipString "if" .>>? ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> If(cond, stmts)
+        let _while = skipString "while" .>>? ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> While(cond, stmts)
+        let eval = skipString "eval" .>>? ws1 >>. expr |>> Eval
 
         do stmtImpl := choice [
             setV
@@ -72,7 +72,7 @@ module Parsers =
             _if
             _while
             eval
-            attempt call
+            call
             setF
         ]
     
