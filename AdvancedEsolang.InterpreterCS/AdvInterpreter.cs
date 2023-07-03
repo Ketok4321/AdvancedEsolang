@@ -74,7 +74,7 @@ public sealed class AdvInterpreter
             return expression switch
             {
                 Expression.Get { name: "this" } => self,
-                Expression.Get { name: var name } when locals.ContainsKey(name) => locals[name],
+                Expression.Get { name: var name } when locals!.ContainsKey(name) => locals[name],
                 Expression.Get { name: var name } when Classes.ContainsKey(name) => new AdvObject(Classes[name]),
                 Expression.Get { name: var name } => throw AdvException.NameNotFound(name),
                 Expression.CallExpr { objExpr: var objExpr, methodName: var methodName, args: var args} => RunCall(objExpr, methodName, args),
