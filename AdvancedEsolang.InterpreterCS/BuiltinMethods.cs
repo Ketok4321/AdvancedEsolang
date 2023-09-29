@@ -11,7 +11,11 @@ public static class BuiltinMethods
     
     private static int GetInt(BuiltinMethodCtx ctx, AdvObject obj)
     {
-        if (int.TryParse(obj.Class.name, out var i)) return i;
+        var toString = obj.Class.get<Method>("toString").ToNullable() ?? throw AdvException.CallInvalidArgument(ctx.Self.Class, ctx.Method.name);
+
+        var result = GetString(ctx, ctx.Interpreter.RunMethod(obj, toString, Array.Empty<AdvObject>()));
+        
+        if (int.TryParse(result, out var i)) return i;
 
         throw AdvException.CallInvalidArgument(ctx.Self.Class, ctx.Method.name);
     }

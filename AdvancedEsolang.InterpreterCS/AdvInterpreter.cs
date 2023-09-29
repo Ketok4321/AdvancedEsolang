@@ -46,7 +46,7 @@ public sealed class AdvInterpreter
         RunMethod(ProgramObj, mainMethod, Array.Empty<AdvObject>());
     }
 
-    private AdvObject RunMethod(AdvObject self, Method method, AdvObject[] args)
+    public AdvObject RunMethod(AdvObject self, Method method, AdvObject[] args)
     {
         var methodBody = method.body.ToNullable();
 
