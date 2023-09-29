@@ -5,6 +5,13 @@ open FParsec
 open AdvancedEsolang.Syntax
 
 module Parsers =
+    let rec private undotify (e: Expression) (s: string) =
+        if s.Contains(".") then
+            let rest, last = s.Substring(0, s.LastIndexOf('.')), s.Substring(s.LastIndexOf('.') + 1)
+            GetF(undotify e rest, last)
+        else
+            GetF(e, s)
+    
     let allowedChars = letter <|> digit <|> choice (['_'; '+'; '-'; '*'; '/'] |> List.map pchar)
     let allowedFilenameChars = allowedChars <|> choice (['\\'; '.'] |> List.map pchar)
 
@@ -12,6 +19,7 @@ module Parsers =
     let ws: Parser<_, Library> = attempt (skipMany (spaces .>> comment .>> spaces)) <|> spaces
     let ws1: Parser<_, Library> = skipChar ' ' .>> ws
     let name: Parser<_, Library> = many1Chars allowedChars
+    let named: Parser<_, Library> = many1Chars (allowedChars <|> pchar '.')
     let filename: Parser<_, Library> = many1Chars allowedFilenameChars
     let listOf p : Parser<_, Library> = between (skipChar '(') (skipChar ')') (sepBy p (skipChar ',' .>> ws))
 
@@ -22,14 +30,15 @@ module Parsers =
     let stmt, private stmtImpl = createParserForwardedToRef<Statement, Library> ()
     let stmts = ws >>. manyTill (stmt .>> ws) (skipString "end")
 
-    let call = exprP .>>? skipChar '.' .>>. name .>>.? listOf expr
-
     module Expression =
         let operator o = exprP .>>? ws .>>? skipString o .>> ws .>>. exprP
         
         let get = name |>> Get
-        let readF = exprP .>>? skipChar '.' .>>. name |>> GetF
-        let call = call |>> fun ((objExpr, methodName), args) -> CallExpr(objExpr, methodName, args)
+        let readF = exprP .>>? skipChar '.' .>>. named |>> (fun (objExpr, fieldName) -> undotify objExpr fieldName)
+        let call = exprP .>>? skipChar '.' .>>. named .>>.? listOf expr |>> fun ((objExpr, methodName), args) ->
+            match undotify objExpr methodName with
+            | GetF (objExpr, fieldName) -> CallExpr(objExpr, fieldName, args)
+            | _ -> failwith "Unreachable code"
         let is = exprP .>>? ws1 .>>? skipString "is" .>> ws1 .>>. name |>> Is
         let equals = operator "=" |>> Equals
         let notEquals = operator "!=" |>> Equals |>> fun o -> CallExpr(o, "not", [])
@@ -59,8 +68,13 @@ module Parsers =
 
     module Statement =
         let setV = skipString "variable" .>>? ws1 >>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> SetV
-        let setF = exprP .>>? skipChar '.' .>>. name .>> ws .>>? skipString "=" .>> ws .>>. expr |>> fun ((objExpr, fieldName: string), value) -> SetF(objExpr, fieldName, value)
-        let call = call |>> fun ((objExpr, methodName), args) -> CallStmt(objExpr, methodName, args)
+        let setF = exprP .>>? skipChar '.' .>>. named .>> ws .>>? skipString "=" .>> ws .>>. expr |>> fun ((objExpr, fieldName: string), value) ->
+            match undotify objExpr fieldName with
+            | GetF (objExpr, fieldName) -> SetF(objExpr, fieldName, value)
+            | _ -> failwith "Unreachable code"
+        let call = Expression.call |>> function
+            | CallExpr (objExpr, methodName, expressions) -> CallStmt(objExpr, methodName, expressions)
+            | _ -> failwith "Unreachable code"
         let rtrn = skipString "return" .>>? ws1 >>. expr |>> Return
         let _if = skipString "if" .>>? ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> If(cond, stmts)
         let _while = skipString "while" .>>? ws1 >>. expr .>> skipChar ':' .>>. stmts |>> fun (cond, stmts) -> While(cond, stmts)
