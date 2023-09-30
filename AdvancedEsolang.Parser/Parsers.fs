@@ -67,7 +67,7 @@ module Parsers =
         ]
 
     module Statement =
-        let setV = skipString "variable" .>>? ws1 >>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> SetV
+        let setV = opt (skipString "variable") .>>? ws1 >>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> SetV
         let setF = exprP .>>? skipChar '.' .>>. named .>> ws .>>? skipString "=" .>> ws .>>. expr |>> fun ((objExpr, fieldName: string), value) ->
             match undotify objExpr fieldName with
             | GetF (objExpr, fieldName) -> SetF(objExpr, fieldName, value)

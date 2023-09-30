@@ -9,7 +9,7 @@ class SerializerTester extends Tester:
 
         variable serialized = Serializer.serialize("result", obj)
         
-        eval "variable " + serialized
+        eval serialized
 
         this.result("The type of the deserialized object should be correct", result is SerializerTester_TestClass)
         this.result("The field a of the deserialized object should be correct", (result.a) is 10)
@@ -26,7 +26,7 @@ class SerializerTester extends Tester:
 
         variable serialized = Serializer.serialize("result", obj)
 
-        eval "variable " + serialized
+        eval serialized
 
         this.result("The type of the nested deserialized object should be correct", (result.b) is SerializerTester_TestClass)
         this.result("The field a of the nested deserialized object should be correct", ((result.b).a) is 10)

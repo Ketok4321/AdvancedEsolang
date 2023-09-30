@@ -32,7 +32,7 @@ and sExprP expr = // sExpr but parenthesizes the expression if it's not simple
     | _ -> $"({sExpr expr})"
 
 and sStmt = function
-    | SetV (varName, value) -> $"variable {varName} = {sExpr value}"
+    | SetV (varName, value) -> $"{varName} = {sExpr value}"
     | SetF (objExpr, fieldName, value) -> $"{sExprP objExpr}.{fieldName} = {sExpr value}"
     | CallStmt (objExpr, methodName, args) -> sCall objExpr methodName args
     | Return expr -> $"return {sExpr expr}"
