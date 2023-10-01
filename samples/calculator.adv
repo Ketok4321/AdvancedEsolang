@@ -5,23 +5,23 @@ class Calculator extends Program:
     field output    
     
     method mult(a, b):
-        variable result = 0
+        result = 0
 
-        variable i = 0
+        i = 0
         while !(i.equals(b)):
-            variable i = i.++()
-            variable result = a + result # a is first because we aren't sure of its mutability
+            i = i.++()
+            result = a + result # a is first because we aren't sure of its mutability
         end
 
         return result
     end
 
     method div(a, b):
-        variable result = 0
+        result = 0
         
         while !(a is 0):
-            variable a = a - b
-            variable result = result.++()
+            a = a - b
+            result = result.++()
         end
 
         return result
@@ -34,29 +34,29 @@ class Calculator extends Program:
         (this.output).program = this
         
         (this.output).write("Number 1:")
-        variable a = Mirror.instantiate((this.input).read())
+        a = Mirror.instantiate((this.input).read())
         (this.output).write("Operation [+-*/]:")
-        variable op = (this.input).read()
+        op = (this.input).read()
         (this.output).write("Number 2:")
-        variable b = Mirror.instantiate((this.input).read())
+        b = Mirror.instantiate((this.input).read())
 
-        variable result = Null
+        result = Null
         
         if op.equals("+"):
-            variable result = a + b
+            result = a + b
         end
         if op.equals("-"):
-            variable result = a - b
+            result = a - b
         end
         if op.equals("*"):
-            variable result = this.mult(a, b)
+            result = this.mult(a, b)
         end
         if op.equals("/"):
-            variable result = this.div(a, b)
+            result = this.div(a, b)
         end
 
         if result is Null:
-            variable result = "Wrong operation!"
+            result = "Wrong operation!"
         end
 
         (this.output).write(result)

@@ -8,7 +8,7 @@ class Cat extends Program:
         (this.input).program = this
         (this.output).program = this
 
-        variable input = (this.input).read()
+        input = (this.input).read()
         (this.output).write(input)
     end
 end

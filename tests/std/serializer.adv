@@ -3,11 +3,11 @@ import ../../std/serializer
 
 class SerializerTester extends Tester:
     method serialization():
-        variable obj = SerializerTester_TestClass
+        obj = SerializerTester_TestClass
         obj.a = 10
         obj.b = True
 
-        variable serialized = Serializer.serialize("result", obj)
+        serialized = Serializer.serialize("result", obj)
         
         eval serialized
 
@@ -17,14 +17,14 @@ class SerializerTester extends Tester:
     end
 
     method nestedSerialization():
-        variable obj = SerializerTester_TestClass
-        variable obj2 = SerializerTester_TestClass
+        obj = SerializerTester_TestClass
+        obj2 = SerializerTester_TestClass
         obj.a = 10
         obj.b = obj2
         obj2.a = 10
         obj2.b = True
 
-        variable serialized = Serializer.serialize("result", obj)
+        serialized = Serializer.serialize("result", obj)
 
         eval serialized
 
@@ -34,14 +34,14 @@ class SerializerTester extends Tester:
     end
     
     method subclassSerialization():
-        variable obj = SerializerTester_TestClass2
+        obj = SerializerTester_TestClass2
         obj.a = 10
         obj.b = True
         obj.c = 5
 
-        variable serialized = Serializer.serialize("result", obj)
+        serialized = Serializer.serialize("result", obj)
         
-        eval "variable " + serialized
+        eval "" + serialized
 
         this.result("The type of the deserialized inheriting object should be correct", result is SerializerTester_TestClass)
         this.result("The field a of the deserialized inheriting object should be correct", (result.a) is 10)

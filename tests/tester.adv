@@ -8,15 +8,15 @@ class Tester extends Object:
         
         this.init()
 
-        variable mirror = Mirror.reflecting(Mirror.typeName(this))
+        mirror = Mirror.reflecting(Mirror.typeName(this))
         
-        variable i = 0
+        i = 0
         while !((mirror.method(i)) is Null):
             if !((mirror.method(i)).equals("init")):
                 eval ("this." + (mirror.method(i))) + "()"
             end
 
-            variable i = i.++()
+            i = i.++()
         end
     end
 
@@ -25,7 +25,7 @@ class Tester extends Object:
     end
     
     method result(test, result):
-        variable output = (this.runner).output
+        output = (this.runner).output
 
         output.write(test)
         if result:

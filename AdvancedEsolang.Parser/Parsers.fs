@@ -67,7 +67,7 @@ module Parsers =
         ]
 
     module Statement =
-        let setV = opt (skipString "variable") .>>? ws1 >>. name .>> ws .>> skipString "=" .>> ws .>>. expr |>> SetV
+        let setV = opt (skipString "variable" .>> ws1) >>. name .>> ws .>>? skipString "=" .>> ws .>>. expr |>> SetV
         let setF = exprP .>>? skipChar '.' .>>. named .>> ws .>>? skipString "=" .>> ws .>>. expr |>> fun ((objExpr, fieldName: string), value) ->
             match undotify objExpr fieldName with
             | GetF (objExpr, fieldName) -> SetF(objExpr, fieldName, value)
@@ -81,13 +81,13 @@ module Parsers =
         let eval = skipString "eval" .>>? ws1 >>. expr |>> Eval
 
         do stmtImpl := choice [
+            setF
             setV
             rtrn
             _if
             _while
             eval
             call
-            setF
         ]
     
     let method = skipString "method" .>> ws1 >>. name .>>. listOf name .>>. opt (skipChar ':' >>. stmts) |>> fun ((name, prms), body) -> Method(name, prms, body)

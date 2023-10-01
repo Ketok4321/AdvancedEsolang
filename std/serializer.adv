@@ -3,36 +3,36 @@ import ../generated/class_number
 #TODO: Strings
 class Serializer extends Object:
     method serialize(prefix, object):
-        variable newline = String.char(10)
-        variable quote = String.char(34)
+        newline = String.char(10)
+        quote = String.char(34)
     
-        variable type = Mirror.typeName(object)
-        variable mirror = Mirror.reflecting(type)
+        type = Mirror.typeName(object)
+        mirror = Mirror.reflecting(type)
         
-        variable result = ((prefix + " = ") + type) + newline
+        result = ((prefix + " = ") + type) + newline
         
-        variable result = result + (this.serializeFields(prefix, object, mirror))
+        result = result + (this.serializeFields(prefix, object, mirror))
 
         while !((mirror.parent()) is Null):
             mirror.reflecting(mirror.parent())
 
-            variable result = result + (this.serializeFields(prefix, object, mirror))
+            result = result + (this.serializeFields(prefix, object, mirror))
         end
 
         return result
     end
 
     method serializeFields(prefix, object, mirror):
-        variable result = ""
+        result = ""
         
-        variable i = 0
+        i = 0
         while !((mirror.field(i)) is Null):
-            variable field = mirror.field(i)
-            eval "variable value = object." + field
+            field = mirror.field(i)
+            eval "value = object." + field
             
-            variable result = result + (this.serialize((prefix + ".") + field, value))
+            result = result + (this.serialize((prefix + ".") + field, value))
 
-            variable i = i.++()
+            i = i.++()
         end
         
         return result

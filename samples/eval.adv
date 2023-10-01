@@ -9,7 +9,7 @@ class EvalExample extends Program:
         (this.input).program = this
         (this.output).program = this
 
-        variable input = (this.input).read()
+        input = (this.input).read()
         EvalJail.safeEvalExample(input, this.output)
     end
 end

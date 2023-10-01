@@ -8,13 +8,13 @@ class MirrorTester extends Tester:
     end
 
     method instantiate():
-        variable creation = Mirror.instantiate("True")
+        creation = Mirror.instantiate("True")
 
         this.result("Mirror.instantiate should create an object of the specified type", creation is True)
     end
 
     method typeName():
-        variable a = True
+        a = True
     
         this.result("Mirror.typeName should return the name of the object's type", (Mirror.typeName(a)).equals("True"))
     end
@@ -24,7 +24,7 @@ class MirrorTester extends Tester:
     end
 
     method isAbstract():
-        variable mirrorBase = Mirror.reflecting("MirrorTester_TestBaseClass")
+        mirrorBase = Mirror.reflecting("MirrorTester_TestBaseClass")
 
         this.result("Mirror.isAbstract should return false for a non-abstract class", ((this.mirror).isAbstract()) is False)
         this.result("Mirror.isAbstract should return true for an abstract class", (mirrorBase.isAbstract()) is True)

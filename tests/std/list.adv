@@ -3,9 +3,9 @@ import ../../std/list
 
 class ListTester extends Tester:
     method pushAndPop():
-        variable list = List.init(Array8)
+        list = List.init(Array8)
 
-        variable a = True
+        a = True
 
         list.push(a)
 

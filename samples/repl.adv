@@ -4,9 +4,9 @@ import ../std/list
 
 class REPL extends Program:
     method main():
-        variable input = Input
+        input = Input
         input.program = this
-        variable output = Output
+        output = Output
         output.program = this
 
         while True:
