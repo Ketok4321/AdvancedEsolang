@@ -1,19 +1,9 @@
 abstract class Number extends Object:
-    method ++():
-        
-    end
-    
-    method --():
-        
-    end
-    
-    method isZero():
-        
-    end
-    
-    method toString():
-        
-    end
+    method ++()
+    method --()
+
+    method isZero()
+    method toString()
     
     method +(n):
         if n.isZero():
