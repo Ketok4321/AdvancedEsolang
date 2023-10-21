@@ -10,6 +10,9 @@ open AdvancedEsolang.Stringifier
 
 open Generators
 
+let printfn (str: string) = System.Console.WriteLine(str) // For aot compatibility
+let eprintfn (str: string) = System.Console.Error.WriteLine(str) // For aot compatibility
+
 let rec readD (perspective: string) (path: string) (depCache: System.Collections.Generic.Dictionary<string, Library>): Library =
     let library = {
         name = Path.GetRelativePath(perspective, if path.EndsWith(".adv") then path.Substring(0, path.Length - 4) else path);
@@ -98,17 +101,17 @@ let main argv =
                 | true, gen -> gen number
                 | false, _ -> failwithf "Unknown generator '%s'." name
         
-        printfn "Generated in %i ms." watch.ElapsedMilliseconds
+        printfn $"Generated in %i{watch.ElapsedMilliseconds} ms."
         watch.Restart()
 
         printfn "Stringifying..."
         let libraryStr = Stringifier.sLibrary library
-        printfn "Stringified in %i ms." watch.ElapsedMilliseconds
+        printfn $"Stringified in %i{watch.ElapsedMilliseconds} ms."
         watch.Restart()
 
         printfn "Saving..."
         File.WriteAllText (output, libraryStr)
-        printfn "Saved in %i ms." watch.ElapsedMilliseconds
+        printfn $"Saved in %i{watch.ElapsedMilliseconds} ms."
         watch.Restart()
     , libName, output, number)
     
@@ -124,5 +127,5 @@ let main argv =
         rootCmd.Invoke(argv)
     with
     | :? AdvException as err ->
-        eprintfn "%s" err.Message
+        eprintfn err.Message
         1
