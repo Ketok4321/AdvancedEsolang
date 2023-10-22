@@ -84,6 +84,4 @@ with
         match this.classes |> List.tryFind (fun c -> c.name = name) with
         | Some _class -> Some _class
         | None ->
-            match this.dependencies |> List.tryFind (fun d -> d.getClass(name) <> None) with
-            | Some dep -> dep.getClass(name)
-            | None -> None
+            this.dependencies |> List.tryPick (fun d -> d.getClass(name))
