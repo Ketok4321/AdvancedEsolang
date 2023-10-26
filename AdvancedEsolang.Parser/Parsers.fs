@@ -12,7 +12,7 @@ module Parsers =
         else
             GetF(e, s)
     
-    let allowedChars = letter <|> digit <|> choice (['_'; '+'; '-'; '*'; '/'] |> List.map pchar)
+    let allowedChars = List.concat [[letter; digit]; (['_'; '+'; '-'; '*'; '/'] |> List.map pchar)] |> choice
     let allowedFilenameChars = allowedChars <|> choice (['\\'; '.'] |> List.map pchar)
 
     let comment: Parser<_, Library> = skipChar '#' .>> skipRestOfLine false
