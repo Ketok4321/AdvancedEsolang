@@ -10,8 +10,12 @@ open AdvancedEsolang.Stringifier
 
 open Generators
 
-let printfn (str: string) = System.Console.WriteLine(str) // For aot compatibility
-let eprintfn (str: string) = System.Console.Error.WriteLine(str) // For aot compatibility
+// For aot compatibility
+let printfn (str: string) = System.Console.WriteLine(str)
+let eprintfn (str: string) =
+    System.Console.ForegroundColor <- System.ConsoleColor.Red
+    System.Console.Error.WriteLine(str)
+    System.Console.ResetColor()
 
 let rec readD (perspective: string) (path: string) (depCache: System.Collections.Generic.Dictionary<string, Library>): Library =
     let library = {
@@ -79,7 +83,11 @@ let main argv =
         
         let interpreter = AdvInterpreter(read input, evalParser)
         BuiltinMethods.AddAll(interpreter)
-        interpreter.Run()
+        try
+            interpreter.Run()        
+        with
+        | :? AdvException as err ->
+            eprintfn err.Message
     , input)
     
     formatCmd.SetHandler(fun input ->
@@ -123,9 +131,4 @@ let main argv =
         File.WriteAllText(output, code)
     , input, output)
     
-    try
-        rootCmd.Invoke(argv)
-    with
-    | :? AdvException as err ->
-        eprintfn err.Message
-        1
+    rootCmd.Invoke(argv)
