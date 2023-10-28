@@ -104,8 +104,10 @@ module Parsers =
         getUserState
         |>> (fun ((((abst, name), parent), members), library) -> library, { name = name; parent = Some (library.getClass(parent).Value); isAbstract = abst.IsSome; ownMembers = members  })
         >>= (fun (l, c) ->
-            if l.classes |> List.exists (fun c2 -> c2.name = c.name) then
-                fail $"Class named '%s{c.name}' is already defined"
+            if l.getClass c.name <> None then
+                fail $"Duplicate '%s{c.name}' class definition"
+            else if c.ownMembers |> List.exists (fun x -> c.ownMembers |> List.exists (fun y -> not (LanguagePrimitives.PhysicalEquality x y) && x.name = y.name)) then
+                fail $"Duplicate class member definition inside '%s{c.name}' class"
             else
                 updateUserState (fun p -> { p with classes = c :: p.classes }) >>. preturn c)
     
