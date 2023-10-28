@@ -12,10 +12,13 @@ open Generators
 
 // For aot compatibility
 let printfn (str: string) = System.Console.WriteLine(str)
-let eprintfn (str: string) =
+
+let error (str: string) =
     System.Console.ForegroundColor <- System.ConsoleColor.Red
     System.Console.Error.WriteLine(str)
     System.Console.ResetColor()
+    System.Environment.Exit(1)
+    failwith "say gex"
 
 let rec readD (perspective: string) (path: string) (depCache: System.Collections.Generic.Dictionary<string, Library>): Library =
     let library = {
@@ -37,20 +40,26 @@ let rec readD (perspective: string) (path: string) (depCache: System.Collections
     match runParserOnFile (Parsers.library depProvider) library path System.Text.Encoding.Default with
     | Success (res, _, _) ->
         res
-    | Failure (message, error, _) -> failwith message
+    | Failure (message, err, _) -> error message
 
-let read (path: string): Library =
+let read (path: FileInfo): Library =
     let depCache = System.Collections.Generic.Dictionary<string, Library>()
 
-    let fpath = path |> Path.GetFullPath
-    readD (fpath |> Path.GetDirectoryName) fpath depCache
+    readD path.DirectoryName path.FullName depCache
 
 [<EntryPoint>]
 let main argv =   
     let rootCmd = RootCommand()
 
-    let input = Argument<string>("input", "path of the input file.")    
-    let output = Option<string>([|"--output"; "-o"|], "path of the output file.")
+    let input = Argument<FileInfo>("input", "path of the input file.")
+    input.AddValidator(fun res ->
+        let file = res.GetValueOrDefault<FileInfo>() 
+        if not file.Exists then
+            res.ErrorMessage <- $"File '{file}' does not exist"
+        else
+            ()
+    )
+    let output = Option<FileInfo>([|"--output"; "-o"|], "path of the output file.")
     
     let libName = Argument<string>("name", "name of the library to generate.")
     let number = Option<int>([|"--number"; "-n"|], "number passed as an argument to the generator.")
@@ -78,7 +87,7 @@ let main argv =
             match runParserOnString Parsers.stmts BuiltinTypes.library "eval" (text + "\nend") with
             | Success (res, _, _) ->
                 res
-            | Failure (message, error, _) -> failwith message
+            | Failure (message, err, _) -> error message
         )
         
         let interpreter = AdvInterpreter(read input, evalParser)
@@ -87,16 +96,16 @@ let main argv =
             interpreter.Run()        
         with
         | :? AdvException as err ->
-            eprintfn err.Message
+            error err.Message
     , input)
     
     formatCmd.SetHandler(fun input ->
         let library = read input
         let code = Stringifier.sLibrary library
-        File.WriteAllText(input, code)
+        File.WriteAllText(input.FullName, code)
     , input)
     
-    generateCmd.SetHandler(fun name output number ->
+    generateCmd.SetHandler(fun name (output: FileInfo) number ->
         let watch = System.Diagnostics.Stopwatch()
         watch.Start()
 
@@ -107,7 +116,7 @@ let main argv =
             else
                 match generators.TryGetValue(name) with
                 | true, gen -> gen number
-                | false, _ -> failwithf "Unknown generator '%s'." name
+                | false, _ -> error $"Unknown generator '{name}'."
         
         printfn $"Generated in %i{watch.ElapsedMilliseconds} ms."
         watch.Restart()
@@ -118,17 +127,17 @@ let main argv =
         watch.Restart()
 
         printfn "Saving..."
-        File.WriteAllText (output, libraryStr)
+        File.WriteAllText (output.FullName, libraryStr)
         printfn $"Saved in %i{watch.ElapsedMilliseconds} ms."
         watch.Restart()
     , libName, output, number)
     
-    mergeCmd.SetHandler(fun input output ->
+    mergeCmd.SetHandler(fun input (output: FileInfo) ->
         let lib = read input
 
         let merged = { lib with dependencies = [BuiltinTypes.library]; classes = (lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.rev |> List.map (fun l -> l.classes) |> List.concat) }
         let code = Stringifier.sLibrary merged
-        File.WriteAllText(output, code)
+        File.WriteAllText(output.FullName, code)
     , input, output)
     
     rootCmd.Invoke(argv)
