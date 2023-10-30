@@ -60,7 +60,9 @@ let main argv =
             ()
     )
     let output = Option<FileInfo>([|"--output"; "-o"|], "path of the output file.")
-    
+    let strip = Option<bool>("--strip", "if unused code should be stripped.")
+    let prefix = Option<string>([|"--namespace"; "-n"|], "the namespace used as a prefix.")
+        
     let libName = Argument<string>("name", "name of the library to generate.")
     let number = Option<int>([|"--number"; "-n"|], "number passed as an argument to the generator.")
     
@@ -79,8 +81,14 @@ let main argv =
     let mergeCmd = Command("merge", "merge a file with all its imports outputting a single-file program.")
     mergeCmd.AddArgument(input)
     mergeCmd.AddOption(output)
-    
-    for c in [runCmd; formatCmd; generateCmd; mergeCmd] do rootCmd.AddCommand(c)    
+    mergeCmd.AddOption(strip)
+
+    let prefixCmd = Command("prefix", "prefix all classes in a file with a given string.")
+    prefixCmd.AddArgument(input)
+    prefixCmd.AddOption(output)
+    prefixCmd.AddOption(prefix)
+            
+    for c in [runCmd; formatCmd; generateCmd; mergeCmd; prefixCmd] do rootCmd.AddCommand(c)    
     
     runCmd.SetHandler(fun input ->
         let evalParser = System.Func<string, Statement seq>(fun text ->
@@ -132,12 +140,73 @@ let main argv =
         watch.Restart()
     , libName, output, number)
     
-    mergeCmd.SetHandler(fun input (output: FileInfo) ->
+    mergeCmd.SetHandler(fun input (output: FileInfo) strip ->
         let lib = read input
+        
+        let allClasses = lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.rev |> List.map (fun l -> l.classes) |> List.concat
 
-        let merged = { lib with dependencies = [BuiltinTypes.library]; classes = (lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.rev |> List.map (fun l -> l.classes) |> List.concat) }
+        let mutable usedNames = Set.empty<string>
+        
+        let finalClasses =
+            if strip then            
+                let mapper expr =
+                    match expr with
+                    | Get s ->
+                        usedNames <- usedNames.Add(s)
+                        expr
+                    | _ -> expr
+                    
+                for c in allClasses do
+                    match c.parent with
+                    | Some p -> usedNames <- usedNames.Add(p.name)
+                    | None -> ()
+                    
+                    Mapping.classMapExprs mapper c |> ignore
+                
+                allClasses |> List.filter (fun c -> c.is(BuiltinTypes.Program) || usedNames.Contains(c.name))
+            else
+                allClasses
+
+        let merged = { lib with dependencies = [BuiltinTypes.library]; classes = finalClasses }
         let code = Stringifier.sLibrary merged
         File.WriteAllText(output.FullName, code)
-    , input, output)
+    , input, output, strip)
+    
+    prefixCmd.SetHandler(fun input (output: FileInfo) prefix ->
+        let lib = read input
+        
+        let mapper _class =
+            let fromThisLib name = lib.classes |> List.exists (fun c -> c.name = name) // This could theoretically cause issues if there was a variable called the same as a class
+            {
+                (_class |> Mapping.classMapExprs (
+                    function
+                    | Get name ->
+                        if fromThisLib name then
+                            Get (prefix + name)
+                        else
+                            Get name
+                    | Is (obj, className) ->
+                        if fromThisLib className then
+                            Is (obj, prefix + className)
+                        else
+                            Is (obj, className)
+                    | e -> e
+                ))
+                with
+                    name = prefix + _class.name
+                    parent =
+                        match _class.parent with
+                        | Some p ->
+                            if fromThisLib p.name then
+                                Some { p with name = prefix + p.name }
+                            else
+                                Some p
+                        | None -> None
+            }
+
+        let merged = { lib with classes = lib.classes |> List.map mapper }
+        let code = Stringifier.sLibrary merged
+        File.WriteAllText(output.FullName, code)
+    , input, output, prefix)
     
     rootCmd.Invoke(argv)

@@ -10,6 +10,7 @@
         <Compile Include="Library.fs" />
         <Compile Include="MethodBodyUtil.fs" />
         <Compile Include="BuiltinTypes.fs" />
+        <Compile Include="Mapping.fs" />
     </ItemGroup>
 
 </Project>
