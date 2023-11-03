@@ -98,7 +98,28 @@ let main argv =
             | Failure (message, err, _) -> error message
         )
         
-        let interpreter = AdvInterpreter(read input, evalParser)
+        let lib = read input
+        
+        let program =
+            match AdvInterpreter.GetPrograms(lib) |> Seq.toList with
+            | [p] -> p
+            | [] -> error $"Cannot run '${lib.name}': No program class found"
+            | l ->
+                printfn "Choose the program to run:"
+                for i, p in l |> List.indexed do
+                    printfn $"{i + 1}) {p}"
+                
+                System.Console.Write("> ")
+                let input = System.Console.ReadLine()
+                match System.Int32.TryParse(input) with
+                | true, num ->
+                    if num >= 1 && num <= l.Length then
+                        l[num - 1]
+                    else
+                        error $"Cannot run a program with index '{input}': Index out of range"
+                | _ -> error $"Cannot run a program with index '{input}': Not a number"
+        
+        let interpreter = AdvInterpreter(lib, program, evalParser)
         BuiltinMethods.AddAll(interpreter)
         try
             interpreter.Run()        

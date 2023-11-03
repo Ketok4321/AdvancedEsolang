@@ -3,8 +3,6 @@ namespace AdvancedEsolang.InterpreterCS;
 [Serializable]
 public class AdvException : Exception
 {
-    public static AdvException ProgramNotFound(Library programLib) =>
-        new($"Cannot run program '${programLib.name}': No program class found");
     public static AdvException NameNotFound(string name) =>
         new($"Cannot get '{name}': No such variable or class");
 

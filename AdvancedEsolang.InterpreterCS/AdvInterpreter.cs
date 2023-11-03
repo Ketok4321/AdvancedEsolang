@@ -15,12 +15,15 @@ public sealed class AdvInterpreter
     private readonly Dictionary<(string, string), BuiltinMethod> builtinMethods =
         new Dictionary<(string, string), BuiltinMethod>();
 
-    public AdvInterpreter(Library programLib, Func<string, IEnumerable<Statement>>? evalParser = null)
+    public static IEnumerable<string> GetPrograms(Library lib)
     {
-        var programClass = programLib.classes.FirstOrDefault(c => c.@is(BuiltinTypes.Program) && !c.isAbstract) ??
-                           throw AdvException.ProgramNotFound(programLib);
+        return lib.classes.Where(c => c.@is(BuiltinTypes.Program) && !c.isAbstract).Select(c => c.name);
+    }
+    
+    public AdvInterpreter(Library programLib, string programClass, Func<string, IEnumerable<Statement>>? evalParser = null)
+    {
         ProgramLib = programLib;
-        ProgramObj = new AdvObject(programClass);
+        ProgramObj = new AdvObject(programLib.getClass(programClass).ToNullable()!);
         Classes = ProgramLib.classDict;
         EvalParser = evalParser;
     }
