@@ -6,11 +6,11 @@ let private tab (s: string) = s.Split('\n') |> Array.map ((+) "    ") |> String.
 let private list = String.concat ", "
 
 let rec sCall objExpr methodName args =
-    $"{sExprP objExpr}.{methodName}({args |> List.map sExpr |> list})"
+    $"{sExprPF objExpr}.{methodName}({args |> List.map sExpr |> list})"
 
 and sExpr = function
     | Get name -> name
-    | GetF (objExpr, fieldName) -> $"{sExprP objExpr}.{fieldName}"
+    | GetF (objExpr, fieldName) -> $"{sExprPF objExpr}.{fieldName}"
     | CallExpr (objExpr, methodName, args) ->
         match methodName, args.Length with
         | "not", 0 ->
@@ -31,9 +31,14 @@ and sExprP expr = // sExpr but parenthesizes the expression if it's not simple
     | Get _ | String _ -> sExpr expr
     | _ -> $"({sExpr expr})"
 
+and sExprPF expr = // sExprP but doens't parenthesize the expression if it's GetF
+    match expr with
+    | GetF _ -> sExpr expr
+    | _ -> sExprP expr
+
 and sStmt = function
     | SetV (varName, value) -> $"{varName} = {sExpr value}"
-    | SetF (objExpr, fieldName, value) -> $"{sExprP objExpr}.{fieldName} = {sExpr value}"
+    | SetF (objExpr, fieldName, value) -> $"{sExprPF objExpr}.{fieldName} = {sExpr value}"
     | CallStmt (objExpr, methodName, args) -> sCall objExpr methodName args
     | Return expr -> $"return {sExpr expr}"
     | If (cond, stmts) -> $"if {sExpr cond}:\n{sStmts stmts}\nend"
