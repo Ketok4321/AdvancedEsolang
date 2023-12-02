@@ -1,0 +1,16 @@
+import ../tester
+import ../../std/string_util
+
+class StringUtilTester extends Tester:
+    method substring():
+        this.result("substring(2, 4) of abcdefgh should be equal to cd", (StringUtil.substring("abcdefgh", 2, 4)).equals("cd"))
+    end
+
+    method indexOf():
+        this.result("Index of d in abcdefgh should be equal to 3", (StringUtil.indexOf("abcdefgh", "d")) is 3)
+    end
+
+    method length():
+        this.result("Length of abcdefgh should be equal to 8", (StringUtil.length("abcdefgh")).equals(8))
+    end
+end

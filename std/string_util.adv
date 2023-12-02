@@ -1,0 +1,40 @@
+import ../generated/class_number
+
+class StringUtil extends Object:
+    method substring(string, start, end):
+        result = ""
+
+        while !(start.equals(end)):
+            result = result + (string.at(start))
+            start = start.++()
+        end
+
+        return result
+    end
+
+    method indexOf(string, char):
+        i = 0
+        c = string.at(i)
+        result = Null
+        while (c is String).and(result is Null):
+            if c.equals(char):
+                result = i # TODO: For some reason when i try to return it here it freezes
+            end
+            i = i.++()
+            c = string.at(i)
+        end
+
+        return result
+    end
+
+    method length(string):
+        i = 0
+        c = string.at(i)
+        while c is String:
+            i = i.++()
+            c = string.at(i)
+        end
+
+        return i
+    end
+end
