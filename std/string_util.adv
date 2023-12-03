@@ -15,16 +15,15 @@ class StringUtil extends Object:
     method indexOf(string, char):
         i = 0
         c = string.at(i)
-        result = Null
-        while (c is String).and(result is Null):
+        while c is String:
             if c.equals(char):
-                result = i # TODO: For some reason when i try to return it here it freezes
+                return i
             end
             i = i.++()
             c = string.at(i)
         end
 
-        return result
+        return Null
     end
 
     method length(string):

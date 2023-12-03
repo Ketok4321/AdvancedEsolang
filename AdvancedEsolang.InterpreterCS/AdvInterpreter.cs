@@ -90,14 +90,10 @@ public sealed class AdvInterpreter
             };
         }
 
-        AdvObject? result = null;
-        
-        void RunStatements(IEnumerable<Statement> statements)
+        AdvObject? RunStatements(IEnumerable<Statement> statements)
         {
             foreach (var statement in statements)
             {
-                if (result != null) return;
-                
                 switch (statement)
                 {
                     case Statement.SetV { varName: var varName, value: var value }:
@@ -110,18 +106,19 @@ public sealed class AdvInterpreter
                         RunCall(objExpr, methodName, callArgs);
                         break;
                     case Statement.Return { result: var res }:
-                        result = RunExpression(res);
-                        break;
+                        return RunExpression(res);
                     case Statement.If { condition: var condition, stmts: var stmts }:
                         if (RunExpression(condition).Class.@is(BuiltinTypes.True))
                         {
-                            RunStatements(stmts);
+                            var res = RunStatements(stmts);
+                            if (res != null) return res;
                         }
                         break;
                     case Statement.While { condition: var condition, stmts: var stmts }:
                         while (RunExpression(condition).Class.@is(BuiltinTypes.True))
                         {
-                            RunStatements(stmts);
+                            var res = RunStatements(stmts);
+                            if (res != null) return res;
                         }
                         break;
                     case Statement.Eval { expr: var expr }:
@@ -132,8 +129,9 @@ public sealed class AdvInterpreter
                         
                         if(RunExpression(expr) is AdvString { Value: var code })
                         {
-                            IEnumerable<Statement> eStatements = EvalParser(code);
-                            RunStatements(eStatements);
+                            IEnumerable<Statement> eStmts = EvalParser(code);
+                            var res = RunStatements(eStmts);
+                            if (res != null) return res;
                         }
                         else
                         {
@@ -141,12 +139,12 @@ public sealed class AdvInterpreter
                         }
                         break;
                 }
-            }   
+            }
+
+            return null;
         }
         
-        RunStatements(methodBody);
-
-        return result ?? AdvObject.Null;
+        return RunStatements(methodBody) ?? AdvObject.Null;
     }
 
     private AdvObject HandleEmptyBody(AdvObject self, Method method, AdvObject[] args)
