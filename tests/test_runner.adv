@@ -2,7 +2,6 @@ import builtin/boolean
 import builtin/string
 import builtin/mirror
 import std/list
-import std/amirror
 import std/serializer
 import std/string_util
 
@@ -23,7 +22,6 @@ class TestRunner extends Program:
         StringTester.run(this)
         MirrorTester.run(this)
         ListTester.run(this)
-        AMirrorTester.run(this)
         SerializerTester.run(this)
         StringUtilTester.run(this)
 
