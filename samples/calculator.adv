@@ -3,29 +3,6 @@ import ../generated/class_number
 class Calculator extends Program:
     field input
     field output    
-    
-    method mult(a, b):
-        result = 0
-
-        i = 0
-        while !(i.equals(b)):
-            i = i.++()
-            result = a + result # a is first because we aren't sure of its mutability
-        end
-
-        return result
-    end
-
-    method div(a, b):
-        result = 0
-        
-        while !(a is 0):
-            a = a - b
-            result = result.++()
-        end
-
-        return result
-    end
 
     method main():
         this.input = Input
@@ -49,10 +26,10 @@ class Calculator extends Program:
             result = a - b
         end
         if op.equals("*"):
-            result = this.mult(a, b)
+            result = a * b
         end
         if op.equals("/"):
-            result = this.div(a, b)
+            result = a / b
         end
 
         if result is Null:
