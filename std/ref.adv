@@ -1,0 +1,9 @@
+class Ref extends Object:
+    field value
+
+    method to(val):
+        this.value = val
+    
+        return this
+    end
+end

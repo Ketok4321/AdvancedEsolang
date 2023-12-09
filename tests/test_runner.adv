@@ -21,7 +21,8 @@ class TestRunner extends Program:
         BooleanTester.run(this)
         StringTester.run(this)
         MirrorTester.run(this)
-        ListTester.run(this)
+        ArrayListTester.run(this)
+        LinkedListTester.run(this)
         SerializerTester.run(this)
         StringUtilTester.run(this)
 
