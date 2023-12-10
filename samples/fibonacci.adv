@@ -1,11 +1,11 @@
-import ../generated/array
 import ../std/list
+import ../generated/class_number
 
 class Fibonacci extends Program:
     field output
 
     method compute(count):
-        list = List.init(Array16)
+        list = LinkedList
 
         if (count.isZero()).or(count.equals(1)):
             this.error("Count must be greater or equal 2")
@@ -17,7 +17,7 @@ class Fibonacci extends Program:
         while !(count.isZero()):
             count = count.--()
 
-            list.push(((list.array).get((list.size) - 1)) + ((list.array).get((list.size) - 2)))
+            list.push((list.last()) + (list.get((list.size()) - 2)))
         end
 
         return list
@@ -31,8 +31,8 @@ class Fibonacci extends Program:
 
         i = 0
 
-        while !(i.equals(result.size)):
-            (this.output).write((result.array).get(i))
+        while !(i.equals(result.size())):
+            (this.output).write(result.get(i))
             i = i.++()
         end
     end
