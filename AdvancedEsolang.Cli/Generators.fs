@@ -176,7 +176,7 @@ generator "binary_number" ["../std/number"] (fun n ->
     [BinaryNumber]
 )
 
-generator "array" ["class_number"] (fun n ->
+generator "array" [] (fun n ->
     let Array = {
         name = "Array"
         parent = Some Object
@@ -198,14 +198,14 @@ generator "array" ["class_number"] (fun n ->
 
             Method ("get", ["index"], Some [
                 for i in [0..n-1] do
-                    If(Is(Get("index"), string i), [
+                    If(CallExpr(Get("index"), "equalsStr", [str (string i)]), [
                         Return (this (string i))
                     ])
                 //TODO: Error
             ])
             Method ("set", ["index"; "value"], Some [
                 for i in [0..n-1] do
-                    If(Is(Get("index"), string i), [
+                    If(CallExpr(Get("index"), "equalsStr", [str (string i)]), [
                         SetF(This, string i, Get("value"))
                     ])
                 //TODO: Error

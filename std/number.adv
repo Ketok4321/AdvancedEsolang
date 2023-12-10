@@ -44,16 +44,11 @@ abstract class Number extends Object:
     end
     
     method equals(n):
-        if n.isZero():
-            if this.isZero():
-                return True
-            end
-            return False
-        end
-        if this.isZero():
-            return False
-        end
-        return (this.--()).equals(n.--())
+        return this.equalsStr(n.toString())
+    end
+
+    method equalsStr(str):
+        return (this.toString()).equals(str)
     end
     
     method greaterThan(n):
