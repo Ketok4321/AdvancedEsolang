@@ -30,11 +30,12 @@ let rec readD (perspective: string) (path: string) (depCache: System.Collections
     let dir = Path.GetDirectoryName(path)
     
     let depProvider p =
-        match depCache.TryGetValue(p) with
+        let fp = Path.GetFullPath(Path.Combine(dir, p + ".adv"))
+        match depCache.TryGetValue(fp) with
         | true, v -> v
         | false, _ ->
-            let r = readD dir (Path.Combine(dir, p + ".adv")) depCache
-            depCache[p] <- r
+            let r = readD dir fp depCache
+            depCache[fp] <- r
             r
 
     match runParserOnFile (Parsers.library depProvider) library path System.Text.Encoding.Default with
@@ -163,8 +164,8 @@ let main argv =
     
     mergeCmd.SetHandler(fun input (output: FileInfo) strip ->
         let lib = read input
-        
-        let allClasses = lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.rev |> List.map (fun l -> l.classes) |> List.concat
+
+        let allClasses = lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.map (fun l -> l.classes) |> List.concat
 
         let mutable usedNames = Set.empty<string>
         

@@ -69,7 +69,7 @@ type Library = {
 }
 with
     member this.fullDeps =
-        this :: (this.dependencies |> List.map (fun d -> d.fullDeps) |> List.concat |> List.distinct) 
+        List.distinct <| List.append (this.dependencies |> List.map (fun d -> d.fullDeps) |> List.concat) [this]
     
     member this.classDict =
         let result = System.Collections.Generic.Dictionary<string, Class>()
