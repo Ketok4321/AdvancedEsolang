@@ -166,26 +166,44 @@ let main argv =
         let lib = read input
 
         let allClasses = lib.fullDeps |> List.filter (fun d -> d <> BuiltinTypes.library) |> List.map (fun l -> l.classes) |> List.concat
-
-        let mutable usedNames = Set.empty<string>
         
         let finalClasses =
-            if strip then            
-                let mapper expr =
-                    match expr with
-                    | Get s ->
-                        usedNames <- usedNames.Add(s)
-                        expr
-                    | _ -> expr
-                    
-                for c in allClasses do
-                    match c.parent with
-                    | Some p -> usedNames <- usedNames.Add(p.name)
-                    | None -> ()
-                    
-                    Mapping.classMapExprs mapper c |> ignore
+            if strip then
+                let classDict = lib.classDict
                 
-                allClasses |> List.filter (fun c -> c.is(BuiltinTypes.Program) || usedNames.Contains(c.name))
+                let rec references (_class: Class) (referenced: System.Collections.Generic.HashSet<string>) =
+                    if referenced.Add(_class.name) then
+                        match _class.parent with
+                        | Some p ->
+                            references p referenced
+                        | None -> ()
+
+                        let mutable quene = []
+                        
+                        let mapper expr =
+                            match expr with
+                            | Get s ->
+                                match classDict.TryGetValue s with
+                                | true, c ->
+                                    quene <- c :: quene
+                                | false, _ -> ()
+                            | _ -> ()
+                            expr
+                        
+                        _class |> Mapping.classMapExprs mapper |> ignore
+
+                        for c in quene do
+                            references c referenced
+                    else
+                        ()
+                
+                let root = lib.classes |> List.filter (fun c -> c.is(BuiltinTypes.Program) && not c.isAbstract)
+                
+                let keep = (System.Collections.Generic.HashSet<string>())
+                for c in root do
+                    references c keep
+                
+                allClasses |> List.filter (fun c -> keep.Contains(c.name))
             else
                 allClasses
 
