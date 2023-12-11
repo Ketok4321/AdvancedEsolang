@@ -1,9 +1,0 @@
-class HelloWorld extends Program:
-    field output    
-    
-    method main():
-        this.output = Output
-        this.output.yourmom.sex.gay.abc.program = this
-        this.output.write("Hello world!")
-    end
-end
