@@ -48,11 +48,11 @@ class LinkedList extends List:
 
     method push(value):
         cell = _LinkedList_Cell
-        cell.head = value
-        #cell.tail = Null
+        cell.value = value
+        cell.prev = this._last
         
         if (this._last) is _LinkedList_Cell: # (non-null check)
-            this._last.tail = cell
+            this._last.next = cell
         end
 
         this._last = cell
@@ -61,20 +61,55 @@ class LinkedList extends List:
         end
     end
 
-    method pop() # TODO
+    method pop():
+        old = this._last
+        this._last = old.prev
 
-    method pushStart() # TODO
+        if (this._last) is _LinkedList_Cell:
+            this._last.next = Null
+        end
+
+        if (this._first) = old:
+            this._first = Null
+        end
+
+        return old.value
+    end
+
+    method pushStart(value):
+        cell = _LinkedList_Cell
+        cell.value = value
+        cell.next = this._first
+        
+        if (this._first) is _LinkedList_Cell: # (non-null check)
+            this._first.prev = cell
+        end
+
+        this._first = cell
+        if (this._last) is Null:
+            this._last = cell
+        end
+    end
 
     method popStart():
         old = this._first
-        this._first = old.tail
-        return old.head
+        this._first = old.next
+
+        if (this._first) is _LinkedList_Cell:
+            this._first.prev = Null
+        end
+
+        if (this._last) = old:
+            this._last = Null
+        end
+
+        return old.value
     end
 
     method _getCell(index):
         cell = this._first
         while !(index.isZero()):
-            cell = cell.tail
+            cell = cell.next
             index = index.--()
         end
 
@@ -82,18 +117,18 @@ class LinkedList extends List:
     end
 
     method get(index):
-        return (this._getCell(index)).head
+        return (this._getCell(index)).value
     end
 
     method set(index, value):
-        (this._getCell(index)).head = value
+        (this._getCell(index)).value = value
     end
 
     method size():
         res = 0
         cell = this._first
         while cell is _LinkedList_Cell:
-            cell = cell.tail
+            cell = cell.next
             res = res.++()
         end
 
@@ -101,15 +136,16 @@ class LinkedList extends List:
     end
 
     method first():
-        return this._first.head
+        return this._first.value
     end
 
     method last():
-        return this._last.head
+        return this._last.value
     end
 end
 
 class _LinkedList_Cell extends Object:
-    field head
-    field tail
+    field value
+    field prev
+    field next
 end

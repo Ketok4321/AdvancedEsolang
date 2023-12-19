@@ -1,7 +1,7 @@
 import ../generated/class_number
 
 class Tester extends Object:
-    field runner    
+    field runner
     
     method run(runner):
         this.runner = runner
@@ -9,14 +9,20 @@ class Tester extends Object:
         this.init()
 
         mirror = Mirror.reflecting(Mirror.typeName(this))
-        
+       
+        this.runTests(mirror)
+    end
+
+    method runTests(mirror):
         i = 0
-        while !((mirror.method(i)) is Null):
-            if !((mirror.method(i)).equals("init")):
+        method = mirror.method(i)
+        while !(method is Null):
+            if !(method.equals("init")):
                 eval ("this." + (mirror.method(i))) + "()"
             end
 
             i = i.++()
+            method = mirror.method(i)
         end
     end
 
@@ -35,5 +41,9 @@ class Tester extends Object:
             output.write("Failure!!!")
             (this.runner).errored = True
         end
+    end
+
+    method dump(obj): # a helper method for use by the deriving classes
+        this.runner.output.write(Serializer.serialize("obj", obj))
     end
 end

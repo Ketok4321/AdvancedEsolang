@@ -3,33 +3,38 @@ import ../../std/list
 
 import ../../generated/array
 
-abstract class ListTester extends Tester:
+class ListTester extends Tester:
     field list
 
-    method init()
+    method runTests(mirror):
+        this.list = ArrayList.new(Array16)
+        this.pushAndPop()
+
+        this.list = LinkedList
+        this.pushAndPop()
+    end
 
     method pushAndPop():
         a = True
+        b = False
 
-        list.push(a)
+        this.list.push(a)
 
-        this.result("List's size after 1 push should be equal to 1", (list.size()) is 1)
-        this.result("List's first element should be equal to the one just pushed to it", (list.get(0)) = a)
+        this.result("List's size after first push should be equal to 1", (this.list.size()) is 1)
+        this.result("List's first element should be equal to the one just pushed to it", (this.list.get(0)) = a)
 
-        list.pop()
+        this.list.push(b)
 
-        this.result("List's size after pushing and popping should be equal to 0", (list.size()) is 0)
-    end
-end
+        this.result("List's size after second push should be equal to 2", (this.list.size()) is 2)
+        this.result("List's first element should be equal to the one pushed to it before", (this.list.get(0)) = a)
+        this.result("List's second element should be equal to the one just pushed to it", (this.list.get(1)) = b)
+        
+        this.list.pop()
 
-class ArrayListTester extends ListTester:
-    method init():
-        this.list = ArrayList.new(Array16)
-    end
-end
+        this.result("List's size after popping once should be equal to 1", (this.list.size()) is 1)
+        
+        this.list.pop()
 
-class LinkedListTester extends ListTester:
-    method init():
-        this.list = LinkedList
+        this.result("List's size after popping twice should be equal to 0", (this.list.size()) is 0)
     end
 end

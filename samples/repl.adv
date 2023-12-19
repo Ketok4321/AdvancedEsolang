@@ -1,6 +1,9 @@
 import ../generated/class_number
 import ../generated/array
 import ../std/list
+import ../std/serializer
+import ../std/string_util
+import ../std/ref
 
 class REPL extends Program:
     method main():
