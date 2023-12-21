@@ -7,7 +7,9 @@ let Object = {
     name = "Object"
     parent = None
     isAbstract = false
-    ownMembers = []
+    ownMembers = [
+        Method("throw", ["s"], Builtin)
+    ]
 }
 
 let Null = {

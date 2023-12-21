@@ -29,5 +29,10 @@ public class AdvException : Exception
         new($"Cannot instantiate an object of '{type.name}' class: The class is abstract");
 
 
-    private AdvException(string message) : base(message) { }
+    protected AdvException(string message) : base(message) { }
+}
+
+public class AdvUserException : AdvException
+{
+    public AdvUserException(string message) : base(message) { }
 }

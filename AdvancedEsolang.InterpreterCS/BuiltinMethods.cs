@@ -22,9 +22,20 @@ public static class BuiltinMethods
     
     public static void AddAll(AdvInterpreter i)
     {
+        AddThrow(i);
         AddStrings(i);
         AddIO(i);
         AddMirror(i);
+    }
+
+    
+    public static void AddThrow(AdvInterpreter i) {
+        i.AddBuiltinMethod(("Object", "throw"), false, ctx =>
+        {
+            var str = GetString(ctx, ctx.Args[0]);
+
+            throw new AdvUserException(str);
+        });
     }
 
     public static void AddStrings(AdvInterpreter i)
