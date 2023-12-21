@@ -1,8 +1,22 @@
+#TODO: Rename this file now that it also contains tuple
+
 class Ref extends Object:
     field value
 
     method to(val):
         this.value = val
+    
+        return this
+    end
+end
+
+class Tuple extends Object:
+    field a
+    field b
+
+    method new(a, b):
+        this.a = a
+        this.b = b
     
         return this
     end
