@@ -76,13 +76,8 @@ public static class BuiltinMethods
 
     public static void AddIO(AdvInterpreter i)
     {
-        i.AddBuiltinMethod(("Output", "write"), true, ctx => { Console.WriteLine(ctx.Args[0]); });
-
-        i.AddBuiltinMethod(("Input", "read"), true, ctx =>
-        {
-            Console.Write("> ");
-            return Console.ReadLine()?.ToAdvObject();
-        });
+        i.AddBuiltinMethod(("Output", "write"), true, ctx => Console.WriteLine(ctx.Args[0]));
+        i.AddBuiltinMethod(("Input", "read"), true, ctx => Console.ReadLine()?.ToAdvObject());
     }
     
     public static void AddMirror(AdvInterpreter i)
