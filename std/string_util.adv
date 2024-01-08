@@ -1,5 +1,3 @@
-import ../generated/class_number
-
 class StringUtil extends Object:
     method substring(string, start, end):
         result = ""

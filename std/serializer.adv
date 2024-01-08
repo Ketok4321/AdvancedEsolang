@@ -1,5 +1,3 @@
-import ../generated/class_number
-
 #TODO: Strings
 class Serializer extends Object:
     method serialize(prefix, object):
