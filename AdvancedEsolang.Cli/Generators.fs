@@ -91,7 +91,7 @@ generator "instance_number" ["../std/number"] (fun n ->
                 SetV ("result", _new InstanceNumber)
                 SetF (Get "result", "previous", Get "previous")
                 SetF (Get "result", "string", Get "string")
-                If (not (Is (Get "previous", "Null")), [
+                If (_not (Is (Get "previous", "Null")), [
                     SetF (Get "previous", "next", Get "result")
                 ])
                 Return (Get "result")

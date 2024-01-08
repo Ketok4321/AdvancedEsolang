@@ -11,6 +11,7 @@
         <Compile Include="MethodBodyUtil.fs" />
         <Compile Include="BuiltinTypes.fs" />
         <Compile Include="Mapping.fs" />
+        <Compile Include="ClassTree.fs" />
     </ItemGroup>
 
 </Project>

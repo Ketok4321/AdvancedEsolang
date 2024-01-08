@@ -8,6 +8,7 @@ open AdvancedEsolang.InterpreterCS
 open AdvancedEsolang.Parser
 open AdvancedEsolang.Stringifier
 
+open MethodBodyUtil
 open Generators
 
 // For aot compatibility
@@ -89,7 +90,11 @@ let main argv =
     prefixCmd.AddOption(output)
     prefixCmd.AddOption(prefix)
             
-    for c in [runCmd; formatCmd; generateCmd; mergeCmd; prefixCmd] do rootCmd.AddCommand(c)    
+    let mirrorCmd = Command("mirror", "generate reflection metadata for a library.")
+    mirrorCmd.AddArgument(input)
+    mirrorCmd.AddOption(output)
+            
+    for c in [runCmd; formatCmd; generateCmd; mergeCmd; prefixCmd; mirrorCmd] do rootCmd.AddCommand(c)
     
     runCmd.SetHandler(fun input ->
         let evalParser = System.Func<string, Statement seq>(fun text ->
@@ -248,5 +253,118 @@ let main argv =
         let code = Stringifier.sLibrary merged
         File.WriteAllText(output.FullName, code)
     , input, output, prefix)
+
+    mirrorCmd.SetHandler(fun input (output: FileInfo) ->
+            let lib = read input
+            
+            let allClasses = lib.fullDeps |> List.map (fun l -> l.classes) |> List.concat // How will it behave with naming collisions?
+            let tree = ClassTree.create allClasses
+
+            let accessTree tree (generator: Class -> Statement list) =
+                let rec generatePart ct =
+                    match ct with
+                    | ClassTree (_class, children) ->
+                        [If(
+                            Is(Get "obj", _class.name),
+                            (children |> List.map generatePart |> List.concat) @ (generator _class)
+                        )]
+
+                tree |> List.map generatePart |> List.concat
+
+            let mirror = {
+                name = "mirror"
+                dependencies = [BuiltinTypes.library]
+                classes = [
+                    {
+                        name = "Mirror"
+                        parent = Some BuiltinTypes.Object
+                        isAbstract = false
+                        
+                        ownMembers = [
+                            Field("toReflect")
+                                                        
+                            Method("instantiate", ["typeName"], Some [
+                                for _class in allClasses do
+                                    If(
+                                        CallExpr(Get "typeName", "equals", [str _class.name]),
+                                        [
+                                            Return(_new _class)
+                                        ]
+                                    )
+                            ])
+
+                            Method("typeName", ["obj"], Some (accessTree tree (fun _class -> [
+                                Return(str _class.name)
+                            ])))
+                            
+                            Method("reflecting", ["typeName"], Some [
+                                SetF(This, "toReflect", Get "typeName")
+                                Return(This)
+                            ])
+
+                            Method("parent", [], Some [
+                                for _class in allClasses do
+                                    If(
+                                        CallExpr(GetF (This, "toReflect"), "equals", [str _class.name]),
+                                        [
+                                            Return <| match _class.parent with //TODO: optimise for common parents
+                                                      | Some p -> str p.name
+                                                      | None -> _new BuiltinTypes.Null
+                                        ]
+                                    )
+                            ])
+
+                            Method("isAbstract", [], Some [
+                                for _class in allClasses do
+                                    if _class.isAbstract then
+                                        If(
+                                            CallExpr(GetF (This, "toReflect"), "equals", [str _class.name]),
+                                            [
+                                                Return(_new BuiltinTypes.True)
+                                            ]
+                                        )
+                                Return(_new BuiltinTypes.False)
+                            ])
+
+                            Method("field", ["index"], Some [
+                                for _class in allClasses do
+                                    if not (_class.ownMembersOfType<Field>() |> List.isEmpty) then
+                                        If(
+                                            CallExpr(GetF (This, "toReflect"), "equals", [str _class.name]),
+                                            [
+                                                for i, field in _class.ownMembersOfType<Field>() |> List.indexed do
+                                                    If(
+                                                        CallExpr(Get "index", "equalsStr", [str <| i.ToString()]),
+                                                        [
+                                                            Return(str field.name)
+                                                        ]
+                                                    )
+                                            ]
+                                        )
+                            ])
+
+                            Method("method", ["index"], Some [
+                                for _class in allClasses do
+                                    if not (_class.ownMembersOfType<Method>() |> List.isEmpty) then
+                                        If(
+                                            CallExpr(GetF (This, "toReflect"), "equals", [str _class.name]),
+                                            [
+                                                for i, method in _class.ownMembersOfType<Method>() |> List.indexed do
+                                                    If(
+                                                        CallExpr(Get "index", "equalsStr", [str <| i.ToString()]),
+                                                        [
+                                                            Return(str method.name)
+                                                        ]
+                                                    )
+                                            ]
+                                        )
+                            ])
+                        ]
+                    }
+                ];
+            }
+                 
+            File.WriteAllText(output.FullName, Stringifier.sLibrary mirror)
+    , input, output)
     
     rootCmd.Invoke(argv)
