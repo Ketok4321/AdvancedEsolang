@@ -15,9 +15,8 @@ You can generate all of them with recommended settings using this command:
 ```
 {path to advanced cli} generate class_number -n 10000 -o generated/class_number.adv
 {path to advanced cli} generate instance_number -n 10000 -o generated/instance_number.adv
-{path to advanced cli} generate binary_number -n 8 -o generated/binary_number.adv
 {path to advanced cli} generate array -n 16 -o generated/array.adv
-{path to advanced cli} generate builtin -n 0 -o generated/builtin.adv
+{path to advanced cli} generate builtin -o generated/builtin.adv
 ```
 All of those generators generate their respective libraries, with the exception of the `builtin` generator which dumps the contents of the builtin library (mostly for debug purposes, no program will depend on that).
 
