@@ -1,4 +1,5 @@
 import ../generated/class_number
+import ../extra/mirror
 
 class StringEscaping extends Program:
     field newline

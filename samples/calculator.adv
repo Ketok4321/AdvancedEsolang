@@ -1,4 +1,5 @@
 import ../generated/class_number
+import ../extra/mirror
 
 class Calculator extends Program:
     field input
@@ -36,6 +37,6 @@ class Calculator extends Program:
             result = "Wrong operation!"
         end
 
-        (this.output).write(result)
+        (this.output).write(result.toString())
     end
 end

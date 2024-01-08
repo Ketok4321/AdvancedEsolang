@@ -1,5 +1,6 @@
 import ../std/list
 import ../generated/class_number
+import ../extra/mirror
 
 class Fibonacci extends Program:
     field output
@@ -32,7 +33,7 @@ class Fibonacci extends Program:
         i = 0
 
         while !(i.equals(result.size())):
-            (this.output).write(result.get(i))
+            (this.output).write((result.get(i)).toString())
             i = i.++()
         end
     end

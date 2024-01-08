@@ -28,7 +28,7 @@ generator "class_number" ["../std/number"] (fun n ->
             ])
 
             Method ("toString", [], Some [
-                Return (CallExpr(_new Mirror, "typeName", [This]))
+                Return (CallExpr(Get "Mirror", "typeName", [This]))
             ])
         ]
     }

@@ -94,29 +94,8 @@ let False = {
     ]
 }
 
-let Mirror = {
-    name = "Mirror"
-    parent = Some Object
-    isAbstract = false
-    ownMembers = [
-        Field("toReflect")
-        
-        Method("instantiate", ["typeName"], Builtin)
-        Method("typeName", ["obj"], Builtin)
-        
-        Method("reflecting", ["typeName"], Some [
-            SetF(This, "toReflect", Get "typeName")
-            Return(This)
-        ])
-        Method("parent", [], Builtin)
-        Method("isAbstract", [], Builtin)
-        Method("field", ["index"], Builtin)
-        Method("method", ["index"], Builtin)
-    ]
-}
-
 let library = {
     name = "@builtin"
-    classes = [Object; Null; String; Program; Input; Output; Boolean; True; False; Mirror]
+    classes = [Object; Null; String; Program; Input; Output; Boolean; True; False]
     dependencies = []
 }

@@ -1,0 +1,20 @@
+class Mirror extends Object:
+    field toReflect  # This field is read by the interpreter when executing builtin methods on this class
+    
+    method instantiate(typeName)
+    
+    method typeName(obj)
+    
+    method reflecting(typeName):
+        this.toReflect = typeName
+        return this
+    end
+    
+    method parent()
+    
+    method isAbstract()
+    
+    method field(index)
+    
+    method method(index)
+end
