@@ -8,7 +8,7 @@ class Fibonacci extends Program:
         list = LinkedList
 
         if (count.isZero()).or(count.equals(1)):
-            this.error("Count must be greater or equal 2")
+            this.throw("Count must be greater or equal 2")
         end
         list.push(0)
         list.push(1)
