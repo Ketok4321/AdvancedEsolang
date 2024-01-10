@@ -8,14 +8,20 @@ public static class BuiltinMethods
 
         throw AdvException.CallInvalidArgument(ctx.Self.Class, ctx.Method.name);
     }
+
+    private static string GetStringRepresentable(BuiltinMethodCtx ctx, AdvObject obj)
+    {
+        if (obj is AdvString str) return str.Value;
+
+        var toString = obj.Class.get<Method>("toString").ToNullable() ?? throw AdvException.CallInvalidArgument(ctx.Self.Class, ctx.Method.name);
+        return GetString(ctx, ctx.Interpreter.RunMethod(obj, toString, Array.Empty<AdvObject>()));
+    }
     
     private static int GetInt(BuiltinMethodCtx ctx, AdvObject obj)
     {
-        var toString = obj.Class.get<Method>("toString").ToNullable() ?? throw AdvException.CallInvalidArgument(ctx.Self.Class, ctx.Method.name);
-
-        var result = GetString(ctx, ctx.Interpreter.RunMethod(obj, toString, Array.Empty<AdvObject>()));
+        var str = GetStringRepresentable(ctx, obj);
         
-        if (int.TryParse(result, out var i)) return i;
+        if (int.TryParse(str, out var i)) return i;
 
         throw AdvException.CallInvalidArgument(ctx.Self.Class, ctx.Method.name);
     }
