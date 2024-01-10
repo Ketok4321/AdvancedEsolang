@@ -22,27 +22,30 @@ let error (str: string) =
     failwith "say gex"
 
 let rec readD (perspective: string) (path: string) (depCache: System.Collections.Generic.Dictionary<string, Library>): Library =
-    let library = {
-        name = Path.GetRelativePath(perspective, if path.EndsWith(".adv") then path.Substring(0, path.Length - 4) else path);
-        classes = [];
-        dependencies = [BuiltinTypes.library]
-    }
-    
-    let dir = Path.GetDirectoryName(path)
-    
-    let depProvider p =
-        let fp = Path.GetFullPath(Path.Combine(dir, p + ".adv"))
-        match depCache.TryGetValue(fp) with
-        | true, v -> v
-        | false, _ ->
-            let r = readD dir fp depCache
-            depCache[fp] <- r
-            r
+    if File.Exists(path) then
+        let library = {
+            name = Path.GetRelativePath(perspective, if path.EndsWith(".adv") then path.Substring(0, path.Length - 4) else path);
+            classes = [];
+            dependencies = [BuiltinTypes.library]
+        }
+        
+        let dir = Path.GetDirectoryName(path)
+        
+        let depProvider p =
+            let fp = Path.GetFullPath(Path.Combine(dir, p + ".adv"))
+            match depCache.TryGetValue(fp) with
+            | true, v -> v
+            | false, _ ->
+                let r = readD dir fp depCache
+                depCache[fp] <- r
+                r
 
-    match runParserOnFile (Parsers.library depProvider) library path System.Text.Encoding.Default with
-    | Success (res, _, _) ->
-        res
-    | Failure (message, err, _) -> error message
+        match runParserOnFile (Parsers.library depProvider) library path System.Text.Encoding.Default with
+        | Success (res, _, _) ->
+            res
+        | Failure (message, err, _) -> error message
+    else
+        error $"Cannot import `{path}`: No such file"
 
 let read (path: FileInfo): Library =
     let depCache = System.Collections.Generic.Dictionary<string, Library>()
