@@ -47,8 +47,6 @@ public class AdvObject
         {
             fields[i] = Null;
         }
-
-        Console.Error.WriteLine($"Allocated {type.name} ({ClassData.AllFields.Length} fields)");
     }
 
     public AdvObject GetField(string name)
