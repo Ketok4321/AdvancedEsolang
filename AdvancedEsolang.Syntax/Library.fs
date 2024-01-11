@@ -39,6 +39,11 @@ with
     member this.ownMembersOfType<'t when 't :> ClassMember> () =
         this.ownMembers |> Seq.filter (fun x -> x :? 't) |> Seq.cast<'t> |> Seq.toList
     
+    member this.allMembersOfType<'t when 't :> ClassMember> () =
+            match this.parent with
+            | Some parent -> (this.ownMembersOfType<'t>() @ parent.allMembersOfType<'t>()) |> List.distinctBy (fun m -> m.name)
+            | None -> this.ownMembersOfType<'t>()
+
     member this.getMember name =
         match this.ownMembers |> List.tryFind (fun m -> m.name = name) with
         | Some m -> Some m
