@@ -4,6 +4,7 @@ import ../std/list
 import ../std/serializer
 import ../std/string_util
 import ../std/ref
+import ../extra/mirror
 
 class REPL extends Program:
     method main():
