@@ -30,11 +30,10 @@ class Fibonacci extends Program:
 
         result = this.compute(16)
 
-        i = 0
-
-        while !(i.equals(result.size())):
-            (this.output).write((result.get(i)).toString())
-            i = i.++()
+        iter = result.iterate()
+        while iter.continue:
+            this.output.write((iter.getValue()).toString())
+            iter.next()
         end
     end
 end

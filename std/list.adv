@@ -5,7 +5,46 @@ abstract class List extends Object:
     method get(index)
     method set(index, value)
 
+    method iterate():
+        return UniversalIterator.new(this, 0)
+    end
+
     method size()
+end
+
+abstract class Iterator extends Object:
+    field continue
+
+    method next()
+
+    method getValue()
+    method setValue(value)
+end
+
+class UniversalIterator extends Iterator:
+    field _list
+    field _index
+
+    method new(list, startIndex):
+        this._list = list
+        this._index = startIndex
+        this.continue = True
+
+        return this
+    end
+
+    method next():
+        this._index = this._index.++()
+        this.continue = !(this._index.equals(this._list.size()))
+    end
+
+    method getValue():
+        return this._list.get(this._index)
+    end
+
+    method setValue(value):
+        this._list.set(this._index, value)
+    end
 end
 
 class ArrayList extends List:
@@ -124,6 +163,10 @@ class LinkedList extends List:
         (this._getCell(index)).value = value
     end
 
+    method iterate():
+        return LinkedListIterator.new(this)
+    end
+
     method size():
         res = 0
         cell = this._first
@@ -148,4 +191,28 @@ class _LinkedList_Cell extends Object:
     field value
     field prev
     field next
+end
+
+class LinkedListIterator extends Iterator:
+    field _cell
+
+    method new(list):
+        this._cell = list._first
+        this.continue = True
+
+        return this
+    end
+
+    method next():
+        this._cell = this._cell.next
+        this.continue = (this._cell.next) is _LinkedList_Cell
+    end
+
+    method getValue():
+        return this._cell.value
+    end
+
+    method setValue(value):
+        this._cell.value = value
+    end
 end
