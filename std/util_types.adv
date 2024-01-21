@@ -1,5 +1,3 @@
-#TODO: Rename this file now that it also contains tuple
-
 class Ref extends Object:
     field value
 
@@ -18,6 +16,18 @@ class Tuple extends Object:
         this.a = a
         this.b = b
     
+        return this
+    end
+end
+
+abstract class IOPassable extends Object:
+    field input
+    field output
+
+    method passIO(from):
+        this.input = from.input
+        this.output = from.output
+
         return this
     end
 end
