@@ -18,12 +18,25 @@ let rec stmtMapExprs (mapping: Expression -> Expression) (stmt: Statement) =
     | While (condition, stmts) -> While (exprMapExprs mapping condition, stmts |> List.map (stmtMapExprs mapping))
     | Eval expr -> Eval (exprMapExprs mapping expr)
 
+let rec stmtMapStmts (mapping: Statement -> Statement) (stmt: Statement) =
+    match stmt with
+    | If (condition, stmts) -> mapping <| If (condition, stmts |> List.map (stmtMapStmts mapping))
+    | While (condition, stmts) -> mapping <| While (condition, stmts |> List.map (stmtMapStmts mapping))
+    | _ -> mapping stmt
+
+let methodMapStmts (mapping: Statement -> Statement) (method: Method) =
+    match method.body with
+    | Some stmts -> Method(method.name, method.parameters, Some (stmts |> List.map (stmtMapStmts mapping)))
+    | None -> method
+
 let methodMapExprs (mapping: Expression -> Expression) (method: Method) =
     match method.body with
     | Some stmts -> Method(method.name, method.parameters, Some (stmts |> List.map (stmtMapExprs mapping)))
     | None -> method
 
-let classMapExprs (mapping: Expression -> Expression) (_class: Class) =
+let classMapStmts (mapping: Statement -> Statement) (_class: Class) =
     {
-        _class with ownMembers = _class.ownMembers |> List.map (function :? Method as m -> methodMapExprs mapping m | f -> f)
+        _class with ownMembers = _class.ownMembers |> List.map (function :? Method as m -> methodMapStmts mapping m | f -> f)
     }
+
+let classMapExprs = stmtMapExprs >> classMapStmts

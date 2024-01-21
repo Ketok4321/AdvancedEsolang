@@ -179,11 +179,11 @@ let main argv =
             if strip then
                 let classDict = lib.classDict
                 
-                let rec references (_class: Class) (referenced: System.Collections.Generic.HashSet<string>) =
+                let rec references (_class: Class) (referenced: System.Collections.Generic.HashSet<string>) (referencedMembers: System.Collections.Generic.HashSet<string>) =
                     if referenced.Add(_class.name) then
                         match _class.parent with
                         | Some p ->
-                            references p referenced
+                            references p referenced referencedMembers
                         | None -> ()
 
                         let mutable quene = []
@@ -195,23 +195,36 @@ let main argv =
                                 | true, c ->
                                     quene <- c :: quene
                                 | false, _ -> ()
+                            | CallExpr (_, methodName, _) ->
+                                referencedMembers.Add(methodName) |> ignore
+                            | GetF (_, fieldName) ->
+                                referencedMembers.Add(fieldName) |> ignore
                             | _ -> ()
                             expr
+
+                        let mapperStmt stmt =
+                            match stmt with
+                            | CallStmt (_, methodName, _) ->
+                                referencedMembers.Add(methodName) |> ignore
+                            | _ -> () 
+                            stmt
                         
                         _class |> Mapping.classMapExprs mapper |> ignore
+                        _class |> Mapping.classMapStmts mapperStmt |> ignore
 
                         for c in quene do
-                            references c referenced
+                            references c referenced referencedMembers
                     else
                         ()
                 
                 let root = lib.classes |> List.filter (fun c -> c.is(BuiltinTypes.Program) && not c.isAbstract)
                 
                 let keep = (System.Collections.Generic.HashSet<string>())
+                let keepMembers = (System.Collections.Generic.HashSet<string>(["main"; "toString"]))
                 for c in root do
-                    references c keep
+                    references c keep keepMembers
                 
-                allClasses |> List.filter (fun c -> keep.Contains(c.name))
+                allClasses |> List.filter (fun c -> keep.Contains(c.name)) |> List.map(fun c -> { c with ownMembers = c.ownMembers |> List.filter (fun m -> keepMembers.Contains(m.name))})
             else
                 allClasses
 
