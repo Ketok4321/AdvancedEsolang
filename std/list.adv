@@ -28,7 +28,7 @@ class UniversalIterator extends Iterator:
     method new(list, startIndex):
         this._list = list
         this._index = startIndex
-        this.continue = True
+        this.continue = !((list.size()).isZero())
 
         return this
     end
@@ -198,14 +198,14 @@ class LinkedListIterator extends Iterator:
 
     method new(list):
         this._cell = list._first
-        this.continue = True
+        this.continue = (this._cell) is _LinkedList_Cell
 
         return this
     end
 
     method next():
         this._cell = this._cell.next
-        this.continue = (this._cell.next) is _LinkedList_Cell
+        this.continue = (this._cell) is _LinkedList_Cell
     end
 
     method getValue():

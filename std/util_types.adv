@@ -6,6 +6,11 @@ class Ref extends Object:
     
         return this
     end
+
+    # value equality of refs <=> reference equality of their values
+    method equals(other):
+        return (this.value) = other
+    end
 end
 
 class Tuple extends Object:
