@@ -9,7 +9,7 @@ class Ref extends Object:
 
     # value equality of refs <=> reference equality of their values
     method equals(other):
-        return (this.value) = other
+        return (this.value) = (other.value)
     end
 end
 
